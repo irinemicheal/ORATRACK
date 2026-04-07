@@ -1,0 +1,189 @@
+{% extends 'master/header.html' %}
+{% load static %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="pagetitle">
+        <h2>Add Laboratory</h2>
+        <p class="text-muted mb-0">
+            Register Pathology, Biopsy, Oncology & Dental Labs
+        </p>
+    </div>
+
+    <!-- View Lab List Button -->
+    <a href="{% url 'admin_view_labs' %}" class="btn btn-outline-primary">
+        <i class="bi bi-list-ul"></i> View Labs
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle me-1"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <h6 class="text-primary mb-3">
+                <i class="bi bi-hospital"></i> Laboratory Details
+            </h6>
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label">Lab Name</label>
+                    <input type="text" name="lab_name" class="form-control" placeholder="ABC Diagnostic Center" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">License Number</label>
+                    <input type="text" name="license_number" class="form-control" placeholder="LIC-123456" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Lab Type</label>
+                    <select name="lab_type" class="form-select" required>
+                        <option value="">-- Select Lab Type --</option>
+                        <option value="Pathology">Pathology</option>
+                        <option value="Biopsy">Biopsy</option>
+                        <option value="Oncology">Oncology</option>
+                        <option value="Dental">Dental</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Phone</label>
+                    <input type="text" name="phone" class="form-control" placeholder="9876543210" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" placeholder="lab@email.com" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Address</label>
+                    <textarea name="address" class="form-control" rows="2" placeholder="Lab address..." required></textarea>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <h6 class="text-primary mb-3">
+                <i class="bi bi-person-lock"></i> Login Credentials
+            </h6>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" placeholder="lab_username" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="********" required>
+                </div>
+            </div>
+
+            <div class="mt-4 text-end">
+                <button type="submit" class="btn btn-success px-4">
+                    <i class="bi bi-check-circle"></i> Add & Approve Lab
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', function (e) {
+        let valid = true;
+
+        // Remove any previous invalid styles
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+        // Lab Name - required, min 3 chars
+        const labName = form.lab_name.value.trim();
+        if (labName.length < 3) {
+            valid = false;
+            form.lab_name.classList.add('is-invalid');
+            alert('Lab Name must be at least 3 characters.');
+        }
+
+        // License Number - required, min 3 chars
+        const licenseNumber = form.license_number.value.trim();
+        if (licenseNumber.length < 3) {
+            valid = false;
+            form.license_number.classList.add('is-invalid');
+            alert('License Number must be at least 3 characters.');
+        }
+
+        // Lab Type - required
+        const labType = form.lab_type.value;
+        if (!labType) {
+            valid = false;
+            form.lab_type.classList.add('is-invalid');
+            alert('Please select a Lab Type.');
+        }
+
+        // Phone - exactly 10 digits
+        const phone = form.phone.value.trim();
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(phone)) {
+            valid = false;
+            form.phone.classList.add('is-invalid');
+            alert('Phone number must be exactly 10 digits.');
+        }
+
+        // Email - simple regex check
+        const email = form.email.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            valid = false;
+            form.email.classList.add('is-invalid');
+            alert('Please enter a valid email address.');
+        }
+
+        // Address - required, min 5 chars
+        const address = form.address.value.trim();
+        if (address.length < 5) {
+            valid = false;
+            form.address.classList.add('is-invalid');
+            alert('Address must be at least 5 characters.');
+        }
+
+        // Username - required, min 3 chars
+        const username = form.username.value.trim();
+        if (username.length < 3) {
+            valid = false;
+            form.username.classList.add('is-invalid');
+            alert('Username must be at least 3 characters.');
+        }
+
+        // Password - required, min 6 chars
+        const password = form.password.value.trim();
+        if (password.length < 6) {
+            valid = false;
+            form.password.classList.add('is-invalid');
+            alert('Password must be at least 6 characters.');
+        }
+
+        if (!valid) {
+            e.preventDefault();  // Prevent form submission if validation fails
+        }
+    });
+});
+</script>
+
+{% endblock %}

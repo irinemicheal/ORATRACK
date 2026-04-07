@@ -1,0 +1,216 @@
+{% extends 'master/header.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="card shadow-sm border-0">
+
+        <!-- Header -->
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-person-badge"></i> Add Doctor
+            </h5>
+            <a href="{% url 'admin_doctor_list' %}" class="btn btn-light btn-sm">
+                <i class="bi bi-list"></i> Doctor List
+            </a>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+
+                <div class="row">
+
+                    <!-- Username -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Username</label>
+                        <input type="text" name="username" class="form-control"
+                               placeholder="doctor_username" required>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Password</label>
+                        <input type="password" name="password" class="form-control"
+                               placeholder="Enter password" required>
+                    </div>
+
+                    <!-- Doctor Name -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Doctor Name</label>
+                        <input type="text" name="name" class="form-control"
+                               placeholder="Dr. John Doe" required>
+                    </div>
+
+                    <!-- Department -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Department</label>
+                        <select name="department" class="form-select" required>
+                            <option value="">-- Select Department --</option>
+                            {% for dept in departments %}
+                                <option value="{{ dept.department_id }}">
+                                    {{ dept.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Qualification -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Qualification</label>
+                        <input type="text" name="qualification" class="form-control"
+                               placeholder="BDS, MDS, ENT Specialist" required>
+                    </div>
+
+                    <!-- Experience -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Experience (Years)</label>
+                        <input type="number" name="experience" class="form-control"
+                               min="0" placeholder="5" required>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Phone</label>
+                        <input type="text" name="phone" class="form-control"
+                               placeholder="9876543210" required>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" name="email" class="form-control"
+                               placeholder="doctor@email.com" required>
+                    </div>
+
+                    <!-- Image -->
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label fw-semibold">Doctor Image</label>
+                        <input type="file" name="image" class="form-control">
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label fw-semibold">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="Available">Available</option>
+                            <option value="Unavailable">Unavailable</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add Doctor
+                    </button>
+                    <a href="{% url 'admin_home' %}" class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- JavaScript Validation -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', function (e) {
+        // Remove previous invalid classes
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+        let valid = true;
+
+        // Username validation
+        const username = form.username.value.trim();
+        if (username.length < 3) {
+            valid = false;
+            form.username.classList.add('is-invalid');
+            alert('Username must be at least 3 characters.');
+        }
+
+        // Password validation
+        const password = form.password.value.trim();
+        if (password.length < 6) {
+            valid = false;
+            form.password.classList.add('is-invalid');
+            alert('Password must be at least 6 characters.');
+        }
+
+        // Name validation
+        const name = form.name.value.trim();
+        if (name === '') {
+            valid = false;
+            form.name.classList.add('is-invalid');
+            alert('Doctor name is required.');
+        }
+
+        // Department validation
+        const department = form.department.value;
+        if (!department) {
+            valid = false;
+            form.department.classList.add('is-invalid');
+            alert('Please select a department.');
+        }
+
+        // Qualification validation
+        const qualification = form.qualification.value.trim();
+        if (qualification === '') {
+            valid = false;
+            form.qualification.classList.add('is-invalid');
+            alert('Qualification is required.');
+        }
+
+        // Experience validation
+        const experience = form.experience.value;
+        if (experience === '' || isNaN(experience) || Number(experience) < 0) {
+            valid = false;
+            form.experience.classList.add('is-invalid');
+            alert('Experience must be a number 0 or greater.');
+        }
+
+        // Phone validation (10 digits)
+        const phone = form.phone.value.trim();
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(phone)) {
+            valid = false;
+            form.phone.classList.add('is-invalid');
+            alert('Phone number must be exactly 10 digits.');
+        }
+
+        // Email validation
+        const email = form.email.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            valid = false;
+            form.email.classList.add('is-invalid');
+            alert('Please enter a valid email address.');
+        }
+
+        if (!valid) {
+            e.preventDefault();  // Stop form submission
+        }
+    });
+});
+</script>
+
+{% endblock %}

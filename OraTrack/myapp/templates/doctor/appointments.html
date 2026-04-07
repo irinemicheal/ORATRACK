@@ -1,0 +1,259 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+<script src="{% static 'user/Validation/jquery-1.11.1.min.js' %}"></script>
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Today's Appointments</h1>
+    <p class="lead fs-5">Manage your patient consultations efficiently.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+
+<div class="container" style="max-width: 900px;">
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} shadow-sm rounded">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+<div class="mb-5">
+
+  <!-- Label -->
+  <label for="searchInput" class="form-label fw-bold text-primary fs-5">
+    <i class="bi bi-search me-2"></i>
+    Search Appointment
+  </label>
+
+  <!-- Search Box with Icon -->
+  <div class="input-group shadow-sm rounded-4 overflow-hidden">
+    <span class="input-group-text bg-white border-0">
+      <i class="bi bi-search text-muted"></i>
+    </span>
+
+    <input type="text"
+           id="searchInput"
+           class="form-control border-0 py-3"
+           placeholder="Enter Patient ID or Appointment Number"
+           style="font-size: 15px;">
+
+  </div>
+
+</div><div id="appointmentContainer">
+  {% if appointments %}
+  
+    {% for appt in appointments %}
+    <div class="card mb-4 shadow-sm rounded-4 border-0">
+      <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+        <div>
+          <h5 class="mb-1"><strong>Patient:</strong> {{ appt.patient.name }}</h5>
+          <small class="text-muted">
+           
+            Lifestyle: {{ appt.health_details.lifestyle_habits|default:"-" }} |
+            Symptoms: {{ appt.health_details.symptoms|default:"-" }}
+          </small>
+        </div>
+        <div>
+          <span class="badge
+            {% if appt.status == 'Approved' %}bg-success
+            {% elif appt.status == 'Rejected' %}bg-danger
+            {% else %}bg-warning text-dark{% endif %} fs-6 py-2 px-3 rounded-pill">
+            {{ appt.status }}
+          </span>
+        </div>
+      </div>
+
+      <div class="card-body">
+
+        <!-- Status Update Form (only if Pending) -->
+        {% if appt.status == 'Pending' %}
+        <form method="post" class="mb-4 d-flex gap-3 flex-wrap">
+          {% csrf_token %}
+          <input type="hidden" name="appointment_id" value="{{ appt.appointment_id }}">
+          <input type="hidden" name="update_status" value="true">
+
+          <button name="status" value="Approved" class="btn btn-success btn-sm flex-grow-1 flex-md-grow-0 px-4">
+            <i class="bi bi-check-lg me-1"></i> Approve
+          </button>
+          <button name="status" value="Rejected" class="btn btn-danger btn-sm flex-grow-1 flex-md-grow-0 px-4">
+            <i class="bi bi-x-lg me-1"></i> Reject
+          </button>
+        </form>
+        {% endif %}
+{% if appt.status == 'Approved' %}
+  <a href="{% url 'consult' appt.appointment_id %}" class="btn btn-success">
+    Consult
+  </a> 
+  
+  <a href="{% url 'predict' appt.appointment_id %}" class="btn btn-success">
+    Predict
+  </a>
+
+    {% if request.session.department_name == "Oncology" %}
+ 
+  <a href="{% url 'add_chemotherapy' appt.appointment_id %}" class="btn btn-success">
+    Add/view Chemotherapy
+  </a>
+   <a href="{% url 'add_radiotherapy' appt.appointment_id %}" class="btn btn-success">
+    Add Radiotherapy
+  </a>
+{% endif %}
+{% endif %}
+     </div>
+
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-secondary text-center py-4 rounded shadow-sm">
+      <i class="bi bi-calendar-x fs-1 mb-3 text-muted"></i>
+      <p class="mb-0 fs-5">No appointments for today.</p>
+    </div>
+  {% endif %}
+</div></div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('.clinical-prescription-form');
+
+    forms.forEach(form => {
+      form.addEventListener('submit', function(event) {
+        // Simple validation: check if at least one clinical or prescription field has a non-empty value
+        const lesion = form.querySelector('textarea[name="lesion_appearance"]').value.trim();
+        const ulcer = form.querySelector('input[name="ulcer_duration"]').value.trim();
+        const symptoms = form.querySelector('textarea[name="symptoms"]').value.trim();
+        const lifestyle = form.querySelector('textarea[name="lifestyle_habits"]').value.trim();
+        const medical = form.querySelector('textarea[name="medical_history"]').value.trim();
+
+        const diagnosis = form.querySelector('textarea[name="diagnosis"]').value.trim();
+        const medicineDetails = form.querySelector('textarea[name="medicine_details"]').value.trim();
+        const medicineUsage = form.querySelector('textarea[name="medicine_usage"]').value.trim();
+        const moreDetails = form.querySelector('textarea[name="more_details"]').value.trim();
+
+        // You can adjust what fields you want to require; here we require at least one clinical and one prescription field filled
+        const clinicalFilled = lesion || ulcer || symptoms || lifestyle || medical;
+        const prescriptionFilled = diagnosis || medicineDetails || medicineUsage || moreDetails;
+
+        if (!clinicalFilled && !prescriptionFilled) {
+          alert('Please fill in at least one clinical examination or prescription field before submitting.');
+          event.preventDefault();
+          return false;
+        }
+
+        // Additional validations could be added here as needed
+      });
+    });
+  });
+</script>
+<script>
+const csrfToken = "{{ csrf_token }}";
+const departmentName = "{{ request.session.department_name|default:'' }}";
+</script>
+<script>
+  $(document).ready(function () {
+  
+$("#searchInput").on("keyup", function () {
+    let value = $(this).val();
+
+    $.ajax({
+        url: "{% url 'search_appointments_today' %}",
+        data: {
+            search: value
+        },
+        success: function (response) {
+            let html = "";
+
+            if (response.appointments.length === 0) {
+                html = "<div class='alert alert-secondary'>No results found</div>";
+            } else {
+                response.appointments.forEach(function (appt) {
+                   html += `
+<div class="card mb-4 shadow-sm rounded-4 border-0">
+
+  <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+    <div>
+      <h5 class="mb-1"><strong>Patient:</strong> ${appt.patient_name}</h5>
+      <small class="text-muted">
+        Lifestyle: ${appt.lifestyle || '-'} |
+        Symptoms: ${appt.symptoms || '-'}
+      </small>
+    </div>
+
+    <div>
+      <span class="badge ${
+          appt.status === 'Approved' ? 'bg-success' :
+          appt.status === 'Rejected' ? 'bg-danger' :
+          'bg-warning text-dark'
+      } fs-6 py-2 px-3 rounded-pill">
+        ${appt.status}
+      </span>
+    </div>
+  </div>
+
+  <div class="card-body">
+`;
+
+if (appt.status === 'Pending') {
+    html += `
+      <form method="post" class="mb-4 d-flex gap-3 flex-wrap">
+        <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+        <input type="hidden" name="appointment_id" value="${appt.appointment_id}">
+        <input type="hidden" name="update_status" value="true">
+
+        <button name="status" value="Approved"
+          class="btn btn-success btn-sm px-4">
+          Approve
+        </button>
+
+        <button name="status" value="Rejected"
+          class="btn btn-danger btn-sm px-4">
+          Reject
+        </button>
+      </form>
+    `;
+}
+
+if (appt.status === 'Approved') {
+    html += `
+      <a href="/consult/${appt.appointment_id}/" class="btn btn-success">
+        Consult
+      </a>
+
+      <a href="/predict/${appt.appointment_id}/" class="btn btn-success">
+        Predict
+      </a>
+    `;
+
+    if (departmentName === "Oncology") {
+        html += `
+          <a href="/add_chemotherapy/${appt.appointment_id}/" class="btn btn-success">
+            Add/view Chemotherapy
+          </a>
+
+          <a href="/add_radiotherapy/${appt.appointment_id}/" class="btn btn-success">
+            Add Radiotherapy
+          </a>
+        `;
+    }
+}
+
+html += `
+  </div>
+</div>
+`;
+                });
+            }
+
+            $("#appointmentContainer").html(html);
+        }
+    });
+});   });
+
+</script>
+{% endblock %}

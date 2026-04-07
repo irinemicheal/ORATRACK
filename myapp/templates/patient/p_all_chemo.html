@@ -1,0 +1,50 @@
+{% extends 'patient/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-center text-white">
+    <i class="bi bi-journal-medical display-1 mb-3"></i>
+    <h1 class="display-4 fw-bold mb-2">All Chemotherapy Sessions</h1>
+    <p class="lead fs-5">
+      Complete list of all chemotherapy sessions for the patient.
+    </p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!-- Page Header End -->
+
+<div class="container" style="max-width: 1020px; min-height: 200px;">
+    <h4>All Chemotherapy Sessions</h4>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Session Number</th>
+                <th>Drug Name</th>
+                <th>Dosage</th>
+                <th>Date</th>
+                <th>Doctor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for chemo in chemo_sessions %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ chemo.session_no }}</td>
+                <td>{{ chemo.drug_name }}</td>
+                <td>{{ chemo.dosage }}</td>
+                <td>{{ chemo.chemo_date }}</td>
+                <td>{{ chemo.appointment.doctor.name }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted">No Chemotherapy Sessions Found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

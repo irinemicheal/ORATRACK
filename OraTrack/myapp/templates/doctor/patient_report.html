@@ -1,0 +1,181 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Patient Details</h1>
+    <p class="lead fs-5">View patient Details.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Details</title>
+    
+</head>
+<body>
+
+<div class="container mt-5" style="min-height: 400px;">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Patient Full Report</h5>
+        </div>
+
+        <div class="card-body">
+  <div class="container mt-4"><div class="row">
+   
+<div class="col-sm-12">
+  <h4>Patient Details</h4>
+<div class="container mt-4">
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-dark text-white">
+            <h4>Complete Patient Medical Report</h4>
+        </div>
+        <div class="card-body">
+
+            <!-- BASIC DETAILS -->
+            <h5 class="text-primary">Patient Information</h5>
+            <hr>
+
+            <div class="row">
+                <div class="col-md-3">
+                    {% if patient.image %}
+                        <img src="{{ patient.image.url }}" 
+                             class="img-fluid rounded mb-3">
+                    {% endif %}
+                </div>
+
+                <div class="col-md-9">
+                    <p><strong>Name:</strong> {{ patient.name }}</p>
+                    <p><strong>Age:</strong> {{ patient.age }}</p>
+                    <p><strong>Gender:</strong> {{ patient.gender }}</p>
+                    <p><strong>Phone:</strong> {{ patient.phone }}</p>
+                    <p><strong>Email:</strong> {{ patient.email }}</p>
+                    <p><strong>Address:</strong> {{ patient.address }}</p>
+                    <p><strong>Registered Date:</strong> {{ patient.registered_date }}</p>
+                </div>
+            </div>
+
+            <!-- HEALTH DETAILS -->
+            <h5 class="text-success mt-4">Health & Risk Factors</h5>
+            <hr>
+
+            {% if health %}
+                <p><strong>Tobacco:</strong> {{ health.tobacco_use }}</p>
+                <p><strong>Alcohol:</strong> {{ health.alcohol_consumption }}</p>
+                <p><strong>Betel Quid:</strong> {{ health.betel_quid_use }}</p>
+                <p><strong>Sun Exposure:</strong> {{ health.sun_exposure }}</p>
+                <p><strong>Diet Intake:</strong> {{ health.diet_intake }}</p>
+                <p><strong>Poor Oral Hygiene:</strong> {{ health.poor_oral_hygiene }}</p>
+                <p><strong>Family History:</strong> {{ health.family_history }}</p>
+                <p><strong>Immune Compromised:</strong> {{ health.immune_compromised }}</p>
+                <p><strong>HPV Infection:</strong> {{ health.hpv_infection }}</p>
+                <p><strong>Lifestyle Notes:</strong> {{ health.lifestyle_habits }}</p>
+                <p><strong>Symptoms:</strong> {{ health.symptoms }}</p>
+            {% else %}
+                <p class="text-muted">No health details available.</p>
+            {% endif %}
+
+        </div>
+    </div>
+
+<div class="card shadow mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5>Appointments & Treatments</h5>
+    </div>
+    <div class="card-body">
+
+        {% for appointment in appointments %}
+
+            <div class="border p-3 mb-4 rounded">
+
+                <h6 class="text-dark">
+                    Appointment Date: {{ appointment.appointment_date }}
+                    | Doctor: {{ appointment.doctor.name }}
+                    | Department: {{ appointment.department.name }}
+                </h6>
+
+                <!-- Clinical Examination -->
+                {% if appointment.clinical %}
+                    <p><strong>Clinical Symptoms:</strong> {{ appointment.clinical.symptoms }}</p>
+                    <p><strong>Pain Scale:</strong> {{ appointment.clinical.pain_intensity }}</p>
+                {% endif %}
+
+                <!-- Prescription -->
+                {% if appointment.prescription %}
+                    <p><strong>Diagnosis:</strong> {{ appointment.prescription.diagnosis }}</p>
+                    <p><strong>Medicines:</strong> {{ appointment.prescription.medicine_details }}</p>
+                    <p><strong>Usage:</strong> {{ appointment.prescription.medicine_usage }}</p>
+                    <p><strong>Next Visit:</strong> {{ appointment.prescription.next_visit_date }}</p>
+                {% endif %}
+
+                <!-- Chemotherapy -->
+                <h6 class="text-success mt-3">Chemotherapy</h6>
+                {% for chemo in appointment.chemotherapy_set.all %}
+                    <p>
+                        Session {{ chemo.session_no }} -
+                        {{ chemo.drug_name }} -
+                        {{ chemo.dosage }} -
+                        {{ chemo.chemo_date }}
+                    </p>
+                {% empty %}
+                    <p class="text-muted">No chemo sessions</p>
+                {% endfor %}
+
+                <!-- Radiotherapy -->
+                <h6 class="text-warning mt-3">Radiotherapy</h6>
+                {% for radio in appointment.radiotherapy_set.all %}
+                    <p>
+                        Session {{ radio.session_no }} -
+                        {{ radio.radiation_type }} -
+                        {{ radio.dose }} -
+                        {{ radio.radio_date }}
+                    </p>
+                {% empty %}
+                    <p class="text-muted">No radiotherapy sessions</p>
+                {% endfor %}
+
+            </div>
+
+        {% empty %}
+            <p class="text-muted">No appointments found.</p>
+        {% endfor %}
+
+    </div>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header bg-info text-white">
+        <h5>Lab Tests</h5>
+    </div>
+    <div class="card-body">
+
+        {% for test in lab_tests %}
+            <p>
+                <strong>{{ test.lab_test.test_name }}</strong>
+                - Status: {{ test.status }}
+
+                {% if test.report_file %}
+                    | <a href="{{ test.report_file.url }}" target="_blank">
+                        View Report
+                      </a>
+                {% endif %}
+            </p>
+        {% empty %}
+            <p class="text-muted">No lab tests found.</p>
+        {% endfor %}
+
+    </div>
+</div>
+
+    </div>
+</div>
+        </div>
+    </div>
+    </div>
+    </div>    </div>
+{% endblock %}

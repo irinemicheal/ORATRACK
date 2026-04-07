@@ -1,0 +1,180 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-clipboard-data-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Appointment Details</h1>
+    <p class="lead fs-5">View detailed health, clinical, and prescription info for your patient.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+
+<div class="container" style="max-width: 800px;">
+
+  <div class="card shadow rounded-4 border-0 mb-5">
+    <div class="card-header bg-primary text-white fs-4 fw-semibold">
+      <i class="bi bi-person-lines-fill me-2"></i>Patient: {{ appointment.patient.name }}
+    </div>
+
+    <div class="card-body">
+      <section class="mb-4">
+  <h5 class="text-primary mb-3">
+    <i class="bi bi-heart-pulse me-2"></i>Patient Health Details
+  </h5>
+
+  {% if appointment.health_details %}
+  <ul class="list-group list-group-flush rounded-3 overflow-hidden shadow-sm">
+
+    <li class="list-group-item d-flex justify-content-between">
+      Tobacco Use
+      <span class="badge bg-{% if appointment.health_details.tobacco_use == 'Yes' %}danger{% else %}success{% endif %}">
+        {{ appointment.health_details.tobacco_use|default:"-" }}
+      </span>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between">
+      Alcohol Consumption
+      <span class="badge bg-{% if appointment.health_details.alcohol_consumption == 'Yes' %}danger{% else %}success{% endif %}">
+        {{ appointment.health_details.alcohol_consumption|default:"-" }}
+      </span>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between">
+      Betel Quid Use
+      <span class="badge bg-{% if appointment.health_details.betel_quid_use == 'Yes' %}danger{% else %}success{% endif %}">
+        {{ appointment.health_details.betel_quid_use|default:"-" }}
+      </span>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between">
+      Sun Exposure
+      <span class="badge bg-{% if appointment.health_details.sun_exposure == 'Yes' %}warning{% else %}success{% endif %}">
+        {{ appointment.health_details.sun_exposure|default:"-" }}
+      </span>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between">
+      Diet Intake
+      <span class="badge bg-primary">
+        {{ appointment.health_details.diet_intake|default:"-" }}
+      </span>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between">
+      Poor Oral Hygiene
+      <span class="badge bg-{% if appointment.health_details.poor_oral_hygiene == 'Yes' %}danger{% else %}success{% endif %}">
+        {{ appointment.health_details.poor_oral_hygiene|default:"-" }}
+      </span>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between">
+      Family History
+      <span class="badge bg-{% if appointment.health_details.family_history == 'Yes' %}warning{% else %}success{% endif %}">
+        {{ appointment.health_details.family_history|default:"-" }}
+      </span>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between">
+      Immunocompromised
+      <span class="badge bg-{% if appointment.health_details.immune_compromised == 'Yes' %}danger{% else %}success{% endif %}">
+        {{ appointment.health_details.immune_compromised|default:"-" }}
+      </span>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between">
+      HPV Infection
+      <span class="badge bg-{% if appointment.health_details.hpv_infection == 'Yes' %}danger{% else %}success{% endif %}">
+        {{ appointment.health_details.hpv_infection|default:"-" }}
+      </span>
+    </li>
+
+    {% if appointment.health_details.lifestyle_habits %}
+    <li class="list-group-item">
+      <strong>Lifestyle Notes:</strong><br>
+      <span class="text-muted small">
+        {{ appointment.health_details.lifestyle_habits }}
+      </span>
+    </li>
+    {% endif %}
+
+    {% if appointment.health_details.symptoms %}
+    <li class="list-group-item">
+      <strong>Patient Symptoms:</strong><br>
+      <span class="text-muted small">
+        {{ appointment.health_details.symptoms }}
+      </span>
+    </li>
+    {% endif %}
+
+  </ul>
+  {% else %}
+    <p class="text-muted fst-italic">
+      No patient health details recorded.
+    </p>
+  {% endif %}
+</section>
+
+
+      <section class="mb-4">
+        <h5 class="text-primary mb-3"><i class="bi bi-journal-medical me-2"></i>Clinical Examination</h5>
+        {% if appointment.clinical %}
+        <ul class="list-group list-group-flush rounded-3 overflow-hidden shadow-sm">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Lesion Appearance <span class="text-muted small">{{ appointment.clinical.lesion_appearance|default:"-" }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Ulcer Duration <span class="text-muted small">{{ appointment.clinical.ulcer_duration|default:"-" }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Symptoms <span class="text-muted small">{{ appointment.clinical.symptoms|default:"-" }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Lifestyle Habits <span class="text-muted small">{{ appointment.clinical.lifestyle_habits|default:"-" }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Medical History <span class="text-muted small">{{ appointment.clinical.medical_history|default:"-" }}</span>
+          </li>
+        </ul>
+        {% else %}
+        <p class="text-muted fst-italic">No clinical examination recorded yet.</p>
+        {% endif %}
+      </section>
+
+      <section>
+        <h5 class="text-primary mb-3"><i class="bi bi-prescription2 me-2"></i>Prescription</h5>
+        {% if appointment.prescription %}
+        <ul class="list-group list-group-flush rounded-3 overflow-hidden shadow-sm">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Diagnosis <span class="text-muted small">{{ appointment.prescription.diagnosis|default:"-" }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Medicine Details <span class="text-muted small">{{ appointment.prescription.medicine_details|default:"-" }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Usage Instructions <span class="text-muted small">{{ appointment.prescription.medicine_usage|default:"-" }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Additional Notes <span class="text-muted small">{{ appointment.prescription.more_details|default:"-" }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Next Visit Date <span class="badge bg-primary rounded-pill">{{ appointment.prescription.next_visit_date|date:"d M Y" }}</span>
+          </li>
+        </ul>
+        {% else %}
+        <p class="text-muted fst-italic">No prescription recorded yet.</p>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+
+  <div class="text-center mb-5">
+    <a href="{% url 'doctor_appointments' %}" class="btn btn-outline-primary btn-lg shadow-sm">
+      <i class="bi bi-arrow-left-circle me-2"></i> Back to Appointments
+    </a>
+  </div>
+</div>
+
+{% endblock %}

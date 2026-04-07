@@ -1,0 +1,124 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Lab</h1>
+    <p class="lead fs-5">Lab Test.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+
+<div class="container" style="max-width: 1200px;">
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} shadow-sm rounded">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+ 
+
+      <div class="card-body">
+
+    <h2>Lab Test Result</h2>
+
+
+<div class="container mt-5" style="min-height: 300px;">
+    
+
+    {% if patients %}
+        <div class="accordion" id="patientsAccordion">
+            {% for patient in patients %}
+                <div class="accordion-item mb-2">
+                    <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                          Patient OP Number:{{ patient.patient.patient_id }} &nbsp;&nbsp;&nbsp;  {{ patient.patient.name }} ({{ patient.patient.phone }}) - {{ patient.patient.age }} Age
+                        </button>
+                    </h2>
+                    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#patientsAccordion">
+                        <div class="accordion-body">
+                            {% for appt in patient.appointments.values %}
+                                <div class="card mb-3 shadow-sm">
+                                    <div class="card-header bg-info text-white">
+                                   
+                                        <strong>Appointment:</strong> {{ appt.appointment.appointment_date|date:"d M Y" }} |
+                                        <strong>Status:</strong> {{ appt.appointment.status }}
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>Lab Name</th>
+                                                    <th>Lab Type</th>
+                                                    <th>Test Name</th>
+                                                    <th>Description</th>
+                                                    <th>Price</th>
+                                                    <th>Status</th>
+                                                    <th>Forwarded At</th>
+                                                     <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for test in appt.tests %}
+                                                    <tr>
+                                                        <td>{{ test.lab_test.lab.lab_name }}</td>
+                                                        <td>{{ test.lab_test.lab.lab_type }}</td>
+                                                        <td>{{ test.lab_test.test_name }}</td>
+                                                        <td>{{ test.description|default:test.lab_test.description }}</td>
+                                                        <td>{{ test.lab_test.price }}</td>
+                                                        <td>{{ test.status }}</td>
+                                                        <td>{{ test.created_at|date:"d M Y H:i" }}</td>
+                                                        <td class="text-center">
+    {% if test.report_file %}
+        <a href="{{ test.report_file.url }}" 
+           target="_blank" 
+           class="btn btn-outline-primary btn-sm"
+           download style="margin-bottom:5px">
+            <i class="bi bi-download"></i>
+        </a><br>{% if test.appointment.status != "Forwarded to Oncology" %}
+    <a href="{% url 'forwared_to_oncology' test.appointment.appointment_id %}" 
+       class="btn btn-outline-primary btn-sm">
+        Forward to Oncology Department
+    </a>
+{% else %}
+    <span class="badge bg-success">Forwarded</span>
+{% endif %}
+    {% else %}
+        <span class="text-muted">No Report</span>
+    {% endif %}
+</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No lab tests forwarded yet.</p>
+    {% endif %}
+</div>
+
+
+
+  
+
+      </div>
+    </div>
+  
+  
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'lab/header.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pagetitle mb-4">
+    <h2 class="fw-bold">Lab Test Management</h2>
+    <p class="text-muted fs-5">Add & manage laboratory tests efficiently</p>
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm">
+        {{ message }}
+        <button class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div class="row g-4">
+
+  <!-- ADD TEST FORM -->
+  <div class="col-md-5">
+      <div class="card shadow border-0 rounded-4">
+          <div class="card-body p-4">
+              <h5 class="card-title text-primary mb-4">Add New Test</h5>
+
+              <form id="addTestForm" method="post" novalidate>
+                  {% csrf_token %}
+
+                  <div class="mb-4">
+                      <label class="form-label fw-semibold">Test Name <span class="text-danger">*</span></label>
+                      <input type="text" name="test_name" id="test_name" class="form-control form-control-lg shadow-sm" placeholder="E.g. Oral Cancer Biopsy" required>
+                      <div class="invalid-feedback">Please enter a valid test name (at least 3 characters).</div>
+                  </div>
+
+                  <div class="mb-4">
+                      <label class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
+                      <textarea name="description" id="description" class="form-control form-control-lg shadow-sm" rows="4" placeholder="Detailed description of the test" required></textarea>
+                      <div class="invalid-feedback">Please provide a description (at least 10 characters).</div>
+                  </div>
+
+                  <div class="mb-4">
+                      <label class="form-label fw-semibold">Price (₹) <span class="text-danger">*</span></label>
+                      <input type="number" step="0.01" name="price" id="price" class="form-control form-control-lg shadow-sm" placeholder="Eg: 2500.00" required min="0.01">
+                      <div class="invalid-feedback">Please enter a valid price greater than 0.</div>
+                  </div>
+
+                  <button type="submit" class="btn btn-success btn-lg w-100 rounded-pill shadow-sm">
+                      <i class="bi bi-plus-circle me-2"></i> Add Test
+                  </button>
+              </form>
+          </div>
+      </div>
+  </div>
+
+  <!-- TEST LIST -->
+  <div class="col-md-7">
+      <div class="card shadow border-0 rounded-4">
+          <div class="card-body p-4">
+              <h5 class="card-title text-primary mb-4">Available Tests</h5>
+
+              {% if tests %}
+              <div class="table-responsive">
+                  <table class="table table-hover align-middle mb-0">
+                      <thead class="table-light text-uppercase small">
+                          <tr>
+                              <th style="width: 5%;">#</th>
+                              <th style="width: 55%;">Test Name & Description</th>
+                              <th style="width: 20%;">Price</th>
+                              <th style="width: 20%;">Added On</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for test in tests %}
+                          <tr class="align-middle">
+                              <td class="fw-semibold text-secondary">{{ forloop.counter }}</td>
+                              <td>
+                                  <div class="fw-bold">{{ test.test_name }}</div>
+                                  <small class="text-muted fst-italic">{{ test.description }}</small>
+                              </td>
+                              <td class="text-success fw-semibold fs-5">₹ {{ test.price }}</td>
+                              <td class="text-muted">{{ test.created_at|date:"d M Y" }}</td>
+                          </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+              </div>
+              {% else %}
+              <div class="text-center py-5 text-muted fst-italic">
+                  <i class="bi bi-info-circle fs-2 mb-3"></i>
+                  <p class="fs-5">No tests added yet</p>
+              </div>
+              {% endif %}
+          </div>
+      </div>
+  </div>
+
+</div>
+
+<script>
+  (function() {
+    'use strict';
+
+    const form = document.getElementById('addTestForm');
+    const testNameInput = document.getElementById('test_name');
+    const descriptionInput = document.getElementById('description');
+    const priceInput = document.getElementById('price');
+
+    form.addEventListener('submit', function(event) {
+      let valid = true;
+
+      // Validate test name: at least 3 characters
+      if (!testNameInput.value.trim() || testNameInput.value.trim().length < 3) {
+        testNameInput.classList.add('is-invalid');
+        valid = false;
+      } else {
+        testNameInput.classList.remove('is-invalid');
+      }
+
+      // Validate description: at least 10 characters
+      if (!descriptionInput.value.trim() || descriptionInput.value.trim().length < 10) {
+        descriptionInput.classList.add('is-invalid');
+        valid = false;
+      } else {
+        descriptionInput.classList.remove('is-invalid');
+      }
+
+      // Validate price: positive number > 0
+      const priceVal = parseFloat(priceInput.value);
+      if (isNaN(priceVal) || priceVal <= 0) {
+        priceInput.classList.add('is-invalid');
+        valid = false;
+      } else {
+        priceInput.classList.remove('is-invalid');
+      }
+
+      if (!valid) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    });
+  })();
+</script>
+
+{% endblock %}

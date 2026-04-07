@@ -1,0 +1,230 @@
+{% extends 'header.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5 mb-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container text-center py-5 mt-4">
+        <h1 class="display-2 text-white mb-3 animated slideInDown">Patient Registration</h1>
+        <nav aria-label="breadcrumb animated slideInDown">
+            <!-- Breadcrumb if needed -->
+        </nav>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+
+            <div class="card shadow-lg border-0 mb-5 rounded-4">
+                <div class="card-header text-center bg-primary text-white rounded-top-4 py-3">
+                    <h4 class="mb-0">
+                        <i class="fa fa-user-plus me-2"></i>
+                        Create Patient Account
+                    </h4>
+                </div>
+
+                <div class="card-body p-4">
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-info text-center">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" action="{% url 'patient_action' %}" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fa fa-user"></i>
+                                </span>
+                                <input type="text" name="username" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fa fa-lock"></i>
+                                </span>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="name" class="form-control rounded-pill" required>
+                        </div>
+
+                        <!-- Age & Gender -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Age</label>
+                                <input type="number" name="age" class="form-control rounded-pill" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Gender</label>
+                                <select name="gender" class="form-control rounded-pill" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fa fa-phone"></i>
+                                </span>
+                                <input type="text" name="phone" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fa fa-envelope"></i>
+                                </span>
+                                <input type="email" name="email" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea name="address" class="form-control rounded-3" rows="3" required></textarea>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="mb-4">
+                            <label class="form-label">Profile Image</label>
+                            <input type="file" name="image" class="form-control"
+                                   onchange="previewImage(event)">
+                            <img id="preview" class="mt-3 rounded-circle d-none"
+                                 width="120" height="120">
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill">
+                                Register Now
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(event) {
+    const img = document.getElementById('preview');
+    img.src = URL.createObjectURL(event.target.files[0]);
+    img.classList.remove('d-none');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', function (e) {
+        // Remove previous invalid styles
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+        let valid = true;
+
+        // Username: at least 3 chars
+        const username = form.username.value.trim();
+        if (username.length < 3) {
+            valid = false;
+            form.username.classList.add('is-invalid');
+            alert('Username must be at least 3 characters.');
+        }
+
+        // Password: at least 6 chars
+        const password = form.password.value.trim();
+        if (password.length < 6) {
+            valid = false;
+            form.password.classList.add('is-invalid');
+            alert('Password must be at least 6 characters.');
+        }
+
+        // Name: required
+        const name = form.name.value.trim();
+        if (name === '') {
+            valid = false;
+            form.name.classList.add('is-invalid');
+            alert('Full Name is required.');
+        }
+
+        // Age: number > 0
+        const age = form.age.value;
+        if (age === '' || isNaN(age) || Number(age) <= 0) {
+            valid = false;
+            form.age.classList.add('is-invalid');
+            alert('Please enter a valid age.');
+        }
+
+        // Gender: required selection
+        const gender = form.gender.value;
+        if (!gender) {
+            valid = false;
+            form.gender.classList.add('is-invalid');
+            alert('Please select gender.');
+        }
+
+        // Phone: exactly 10 digits
+        const phone = form.phone.value.trim();
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(phone)) {
+            valid = false;
+            form.phone.classList.add('is-invalid');
+            alert('Phone number must be exactly 10 digits.');
+        }
+
+        // Email: simple regex validation
+        const email = form.email.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            valid = false;
+            form.email.classList.add('is-invalid');
+            alert('Please enter a valid email address.');
+        }
+
+        // Address: required
+        const address = form.address.value.trim();
+        if (address === '') {
+            valid = false;
+            form.address.classList.add('is-invalid');
+            alert('Address is required.');
+        }
+
+        if (!valid) {
+            e.preventDefault();  // Stop form submission
+        }
+    });
+});
+</script>
+
+{% endblock content %}

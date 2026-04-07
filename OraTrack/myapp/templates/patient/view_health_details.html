@@ -1,0 +1,98 @@
+{% extends 'patient/header.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container my-5" style="max-width: 900px;">
+
+  <!-- Page Header -->
+  <div class="text-center mb-5">
+    <i class="fas fa-heartbeat fa-4x text-primary mb-3"></i>
+    <h1 class="fw-bold text-primary">My Health Details</h1>
+    <p class="text-muted">Overview of your submitted health and lifestyle information</p>
+    <hr class="mx-auto" style="width: 60px; border-width: 3px; border-color: #0d6efd;">
+  </div>
+
+  {% if health_details %}
+
+  <!-- Health Details Card -->
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-body p-4">
+
+      <!-- Basic Measurements -->
+      <h5 class="fw-bold text-primary mb-3">
+        <i class="fas fa-user-md me-2"></i> Basic Measurements
+      </h5>
+
+   
+
+      <!-- Lifestyle & Risk Factors -->
+      <h5 class="fw-bold text-primary mb-3">
+        <i class="fas fa-leaf me-2"></i> Lifestyle & Risk Factors
+      </h5>
+
+      <table class="table table-borderless align-middle mb-4">
+        <tr><th class="text-secondary">Tobacco Use</th><td>{{ health_details.tobacco_use|default:"—" }}</td></tr>
+        <tr><th class="text-secondary">Alcohol Consumption</th><td>{{ health_details.alcohol_consumption|default:"—" }}</td></tr>
+        <tr><th class="text-secondary">Betel Quid Use</th><td>{{ health_details.betel_quid_use|default:"—" }}</td></tr>
+        <tr><th class="text-secondary">Chronic Sun Exposure</th><td>{{ health_details.sun_exposure|default:"—" }}</td></tr>
+        <tr><th class="text-secondary">Family History of Cancer</th><td>{{ health_details.family_history|default:"—" }}</td></tr>
+        <tr><th class="text-secondary">Compromised Immune System</th><td>{{ health_details.immune_compromised|default:"—" }}</td></tr>
+        <tr><th class="text-secondary">HPV Infection</th><td>{{ health_details.hpv_infection|default:"—" }}</td></tr>
+         <tr><th class="text-secondary">Diet Intake</th><td>{{ health_details.diet_intake|default:"—" }}</td></tr>
+             <tr><th class="text-secondary">Poor Oral Hygiene</th><td>{{ health_details.poor_oral_hygiene|default:"—" }}</td></tr>
+      </table>
+        </table>
+
+      </table>
+
+      <!-- Additional Notes -->
+      <h5 class="fw-bold text-primary mb-3">
+        <i class="fas fa-notes-medical me-2"></i> Additional Information
+      </h5>
+
+      <table class="table table-borderless align-middle mb-4">
+        <tr>
+          <th class="text-secondary w-50">Lifestyle Habits</th>
+          <td>{{ health_details.lifestyle_habits|default:"—" }}</td>
+        </tr>
+        <tr>
+          <th class="text-secondary">Symptoms</th>
+          <td>{{ health_details.symptoms|default:"—" }}</td>
+        </tr>
+      </table>
+
+      <!-- Actions -->
+      <div class="d-flex justify-content-end flex-wrap gap-2">
+        <form method="post" onsubmit="return confirm('Are you sure you want to delete your health details?');">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger btn-lg">
+            <i class="fas fa-trash-alt me-2"></i> Delete
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  {% else %}
+
+  <!-- Empty State -->
+  <div class="card shadow-sm border-0 rounded-4 text-center p-5">
+    <i class="fas fa-file-medical fa-4x text-secondary mb-3"></i>
+    <h4 class="fw-bold">No Health Details Found</h4>
+    <p class="text-muted mb-4">
+      You haven’t added your health information yet.
+    </p>
+    <a href="{% url 'patient_health_details' %}" class="btn btn-primary btn-lg">
+      <i class="fas fa-plus-circle me-2"></i> Add Health Details
+    </a>
+  </div>
+
+  {% endif %}
+</div>
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous" referrerpolicy="no-referrer">
+
+{% endblock content %}

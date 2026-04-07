@@ -1,0 +1,44 @@
+{% extends 'patient/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-center text-white">
+    <i class="bi bi-journal-medical display-1 mb-3"></i>
+    <h1 class="display-4 fw-bold mb-2">Your Consultation History</h1>
+    <p class="lead fs-5">
+      View all your approved Consultation History and appointment details here.
+    </p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!-- Page Header End -->
+
+<div class="container" style="max-width: 720px; min-height: 200px;">
+
+  {% if appointments %}
+    <div class="list-group shadow rounded-4">
+      {% for appt in appointments %}
+        <a href="{% url 'patient_prescription_detail' appt.appointment_id %}" 
+           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 px-4 rounded-3 mb-2 border">
+          <div>
+            <div><strong><i class="bi bi-calendar3 me-1 text-primary"></i>Date:</strong> {{ appt.appointment_date|date:"d M Y" }}</div>
+            <div><strong><i class="bi bi-person-badge me-1 text-primary"></i>Doctor:</strong> {{ appt.doctor.name }}</div>
+          </div>
+          <span class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-eye-fill me-1"></i> View
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info text-center py-5 rounded-4 shadow-sm">
+      <i class="bi bi-exclamation-circle fs-1 mb-3 text-primary"></i>
+      <p class="mb-0 fs-5">No prescriptions found.</p>
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

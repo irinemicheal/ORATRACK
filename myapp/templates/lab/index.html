@@ -1,0 +1,112 @@
+{% extends 'lab/header.html' %}
+{% block content %}
+
+<div class="pagetitle mb-4">
+    <h2>Lab Dashboard</h2>
+</div>
+
+<!-- 🔹 LAB DETAILS CARD -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Lab Details</h5>
+
+     <div class="card shadow-lg border-0 mb-4 rounded-4">
+    <div class="card-body p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">
+                <i class="bi bi-building text-primary me-2"></i>
+                {{ lab.lab_name }}
+            </h4>
+
+            <span class="badge bg-primary px-3 py-2">
+                {{ lab.lab_type }}
+            </span>
+        </div>
+
+        <hr>
+
+        <div class="row gy-3">
+
+            <div class="col-md-6">
+                <div class="info-box p-3 rounded-3 bg-light">
+                    <i class="bi bi-card-text text-secondary me-2"></i>
+                    <strong>License Number:</strong>
+                    <div class="text-muted">{{ lab.license_number }}</div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="info-box p-3 rounded-3 bg-light">
+                    <i class="bi bi-envelope text-danger me-2"></i>
+                    <strong>Email:</strong>
+                    <div class="text-muted">{{ lab.email }}</div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="info-box p-3 rounded-3 bg-light">
+                    <i class="bi bi-telephone text-success me-2"></i>
+                    <strong>Phone:</strong>
+                    <div class="text-muted">{{ lab.phone }}</div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="info-box p-3 rounded-3 bg-light">
+                    <i class="bi bi-geo-alt text-warning me-2"></i>
+                    <strong>Address:</strong>
+                    <div class="text-muted">{{ lab.address }}</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</div>
+
+
+<!-- 🔹 STATISTICS CARDS -->
+<div class="row">
+
+    <!-- Pending Tests -->
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm border-warning">
+            <div class="card-body">
+                <i class="bi bi-hourglass-split text-warning fs-2"></i>
+                <h6 class="mt-2">Pending Tests</h6>
+                <h4 class="fw-bold">{{ pending_tests|default:"0" }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed Reports -->
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm border-success">
+            <div class="card-body">
+                <i class="bi bi-check-circle-fill text-success fs-2"></i>
+                <h6 class="mt-2">Completed Reports</h6>
+                <h4 class="fw-bold">{{ completed_tests|default:"0" }}</h4>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- 🔹 SYSTEM OVERVIEW -->
+<div class="card mt-4 shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title">Lab System Overview</h5>
+        <p class="text-muted">
+            OraTrack Lab Panel enables seamless biopsy sample tracking, pathology
+            diagnostics, oncology referrals, and secure digital report uploads.
+            Integrated with doctors and ML screening modules for faster oral
+            cancer diagnosis and treatment planning.
+        </p>
+    </div>
+</div>
+
+{% endblock %}

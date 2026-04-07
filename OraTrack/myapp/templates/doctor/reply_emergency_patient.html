@@ -1,0 +1,70 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Patient -  Messages</h1>
+    <p class="lead fs-5">Messages from Patient</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+
+
+<div class="container py-5">
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Reply to Patient</h4>
+        </div>
+
+        <div class="card-body">
+
+            <!-- Patient Details -->
+            <div class="mb-3">
+                <strong>Patient Name:</strong> {{ message.patient.name }}
+            </div>
+
+            <div class="mb-3">
+                <strong>Sent On:</strong> {{ message.date|date:"d M Y H:i" }}
+            </div>
+
+            <!-- Patient Message -->
+            <div class="mb-4">
+                <label class="form-label"><strong>Patient Message:</strong></label>
+                <div class="border p-3 rounded bg-light">
+                    {{ message.message }}
+                </div>
+            </div>
+
+            <!-- Reply Form -->
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Your Reply</strong></label>
+                    <textarea name="reply" 
+                              class="form-control" 
+                              rows="5" 
+                              required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    Send Reply
+                </button>
+
+                <a href="{% url 'message_from_patient' %}" 
+                   class="btn btn-secondary">
+                   Cancel
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends 'patient/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header Start -->
+<div class="container-fluid py-5 mb-5 bg-primary">
+  <div class="container text-center text-white">
+    <i class="bi bi-exclamation-octagon display-1 mb-3"></i>
+    <h1 class="display-4 fw-bold mb-2">Patient Complaints</h1>
+    <p class="lead fs-5">
+      Report issues and track responses from the admin
+    </p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px;">
+  </div>
+</div>
+<!-- Page Header End -->
+
+<div class="container mb-5">
+
+  <!-- Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm">
+        <i class="bi bi-info-circle me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="row g-4">
+
+    <!-- LEFT : Complaint Form -->
+    <div class="col-lg-5">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-header bg-danger text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-pencil-square me-2"></i>
+            Raise a Complaint
+          </h5>
+        </div>
+        <div class="card-body">
+          <form id="complaintForm" method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">
+                Describe your issue
+              </label>
+              <textarea id="complaintInput"
+                        name="complaint"
+                        class="form-control"
+                        rows="5"
+                        placeholder="Explain the problem clearly..."
+                        required></textarea>
+              <div class="invalid-feedback">
+                Please enter your complaint before submitting.
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-danger w-100">
+              <i class="bi bi-send-fill me-1"></i>
+              Submit Complaint
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT : Complaint History -->
+    <div class="col-lg-7">
+
+      <h4 class="mb-3">
+        <i class="bi bi-clock-history me-2 text-danger"></i>
+        Complaint History
+      </h4>
+
+      {% if data %}
+        <div class="list-group shadow rounded-4">
+          {% for c in data %}
+            <div class="list-group-item mb-3 rounded-3 border
+                        {% if c.reply %}border-success{% else %}border-warning{% endif %}">
+              
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong>
+                  <i class="bi bi-ticket-perforated me-1 text-danger"></i>
+                  Ticket #{{ c.complaint_id }}
+                </strong>
+
+                {% if c.reply %}
+                  <span class="badge bg-success">
+                    <i class="bi bi-check-circle me-1"></i> Resolved
+                  </span>
+                {% else %}
+                  <span class="badge bg-warning text-dark">
+                    <i class="bi bi-hourglass-split me-1"></i> Pending
+                  </span>
+                {% endif %}
+              </div>
+
+              <p class="mb-2">
+                <strong>Complaint:</strong><br>
+                {{ c.complaint }}
+              </p>
+
+              <span class="badge bg-light text-dark mb-2">
+                <i class="bi bi-calendar-event me-1"></i>
+                {{ c.date|date:"d M Y, h:i A" }}
+              </span>
+
+              {% if c.reply %}
+                <hr>
+                <div class="alert alert-success mb-0 d-flex gap-2">
+                  <i class="bi bi-reply-fill fs-4"></i>
+                  <div>
+                    <strong>Admin Reply:</strong><br>
+                    {{ c.reply }}
+                  </div>
+                </div>
+              {% else %}
+                <div class="alert alert-warning mt-3 mb-0 d-flex gap-2">
+                  <i class="bi bi-info-circle fs-4"></i>
+                  Your complaint is under review.
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-secondary text-center py-5 rounded-4 shadow-sm">
+          <i class="bi bi-inbox fs-1 mb-3"></i>
+          <p class="mb-0 fs-5">No complaints submitted yet.</p>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+<!-- Validation Script -->
+<script>
+(function () {
+  const form = document.getElementById('complaintForm');
+  const input = document.getElementById('complaintInput');
+
+  form.addEventListener('submit', function (e) {
+    if (!input.value.trim()) {
+      e.preventDefault();
+      input.classList.add('is-invalid');
+    } else {
+      input.classList.remove('is-invalid');
+    }
+  });
+})();
+</script>
+
+{% endblock %}

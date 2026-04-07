@@ -1,0 +1,79 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">All Chemo Therapy List</h1>
+    <p class="lead fs-5">All Chemo therapy List.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Chemo Therapy List</title>
+  
+</head>
+<body>
+
+<div class="container mt-5" style="min-height: 400px;">
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h4>Today's Chemotherapy - {{ today }}</h4>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Patient</th>
+                        <th>Session No</th>
+                        <th>Drug</th>
+                        <th>Dosage</th>
+                        <th>Doctor</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for chemo in chemo_sessions %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ chemo.appointment.patient.name }}</td>
+                        <td>{{ chemo.session_no }}</td>
+                        <td>{{ chemo.drug_name }}</td>
+                        <td>{{ chemo.dosage }}</td>
+                        <td>{{ chemo.appointment.doctor.name }}</td>
+                           <td><a href="{% url 'treatment_details' chemo.appointment.patient.patient_id %}"
+                               class="btn btn-sm btn-primary">
+                               View
+                            </a></td> 
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">
+                            No Chemotherapy Sessions Today
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+        </div>
+    </div>
+    </div>
+    </div>    </div>
+{% endblock %}

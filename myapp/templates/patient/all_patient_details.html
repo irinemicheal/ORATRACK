@@ -1,0 +1,211 @@
+{% extends 'patient/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Treatment Details</h1>
+    <p class="lead fs-5">View Treatment Details</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Treatment</title>
+   
+</head>
+<body>
+
+<div class="container mt-5" style="min-height: 400px;">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Treatment History</h5>
+        </div>
+
+        <div class="card-body">
+  <div class="container mt-4"><div class="row">
+   
+<div class="col-sm-12">
+
+<div class="container mt-4">
+
+    <!-- HEADER -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-dark text-white">
+            <h4>Treatment Details Report</h4>
+        </div>
+        <div class="card-body">
+
+            <h5 class="text-primary">Patient Information</h5>
+            <hr>
+
+            <p><strong>Name:</strong> {{ patient.name }}</p>
+            <p><strong>Age:</strong> {{ patient.age }}</p>
+            <p><strong>Gender:</strong> {{ patient.gender }}</p>
+            <p><strong>Phone:</strong> {{ patient.phone }}</p>
+
+            {% if oncology_case %}
+                <p>
+                    <strong>Detection Status:</strong>
+                    <span class="badge bg-warning">
+                        {{ oncology_case.detection_status }}
+                    </span>
+                </p>
+            {% endif %}
+
+        </div>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5>Appointment & Treatment History</h5>
+        </div>
+        <div class="card-body">
+
+            {% for appointment in appointments %}
+
+                <div class="border rounded p-3 mb-4">
+
+                    <h6>
+                        Appointment Date: {{ appointment.appointment_date }}
+                        | Time: {{ appointment.appointment_time }}
+                    </h6>
+
+                    <p>
+                        <strong>Doctor:</strong> {{ appointment.doctor.name }}
+                        | <strong>Department:</strong> {{ appointment.department.name }}
+                        | <strong>Status:</strong> {{ appointment.status }}
+                    </p>
+
+                    <!-- Clinical Examination -->
+                    {% if appointment.clinical %}
+                        <h6 class="text-success">Clinical Examination</h6>
+                        <p><strong>Symptoms:</strong> {{ appointment.clinical.symptoms }}</p>
+                        <p><strong>Pain Scale:</strong> {{ appointment.clinical.pain_intensity }}</p>
+                        <p><strong>Ulcer Duration:</strong> {{ appointment.clinical.ulcer_duration }}</p>
+                    {% endif %}
+
+                    <!-- Prescription -->
+                    {% if appointment.prescription %}
+                        <h6 class="text-info">Prescription</h6>
+                        <p><strong>Diagnosis:</strong> {{ appointment.prescription.diagnosis }}</p>
+                        <p><strong>Medicines:</strong> {{ appointment.prescription.medicine_details }}</p>
+                        <p><strong>Usage:</strong> {{ appointment.prescription.medicine_usage }}</p>
+
+                         <p><strong>More Details/ Treatment Plan:</strong> {{ appointment.prescription.more_details }}</p>
+                        <p><strong>Next Visit:</strong> {{ appointment.prescription.next_visit_date }}</p>
+                    {% endif %}
+
+                    <!-- Chemotherapy -->
+                    <h6 class="text-success mt-3">Chemotherapy Sessions</h6>
+                    {% for chemo in appointment.chemotherapy_set.all %}
+                        <div class="border p-2 mb-2 rounded bg-light">
+                            Session    {{ forloop.counter }} |
+                            Drug: {{ chemo.drug_name }} |
+                            Dose: {{ chemo.dosage }} |
+                            Date: {{ chemo.chemo_date }}
+                        </div>
+                    {% empty %}
+                        <p class="text-muted">No Chemotherapy</p>
+                    {% endfor %}
+
+                    <!-- Radiotherapy -->
+                    <h6 class="text-warning mt-3">Radiotherapy Sessions</h6>
+                    {% for radio in appointment.radiotherapy_set.all %}
+                        <div class="border p-2 mb-2 rounded bg-light">
+                            Session    {{ forloop.counter }}|
+                            Type: {{ radio.radiation_type }} |
+                            Dose: {{ radio.dose }} |
+                            Date: {{ radio.radio_date }}
+                        </div>
+                    {% empty %}
+                        <p class="text-muted">No Radiotherapy</p>
+                    {% endfor %}
+
+                </div>
+
+            {% empty %}
+                <p class="text-muted">No Appointments Found.</p>
+            {% endfor %}
+
+        </div>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-header bg-info text-white">
+            <h5>Lab Tests</h5>
+        </div>
+        <div class="card-body">
+
+          <table class="table table-bordered table-striped table-hover shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Test Name</th>
+            <th>Lab</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Report</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for test in lab_tests %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ test.lab_test.test_name }}</td>
+            <td>{{ test.lab_test.lab.lab_name }}</td>
+
+            <td>
+                <span class="badge
+                    {% if test.status == 'Pending' %}
+                        bg-warning text-dark
+                    {% elif test.status == 'Processing' %}
+                        bg-info
+                    {% elif test.status == 'Completed' %}
+                        bg-success
+                    {% else %}
+                        bg-secondary
+                    {% endif %}">
+                    {{ test.status }}
+                </span>
+            </td>
+
+            <td>
+                {{ test.created_at|date:"d-m-Y h:i A" }}
+            </td>
+
+            <td>
+                {% if test.report_file %}
+                    <a href="{{ test.report_file.url }}"
+                       target="_blank"
+                       class="btn btn-sm btn-outline-primary">
+                        View Report
+                    </a>
+                {% else %}
+                    <span class="text-muted">No Report</span>
+                {% endif %}
+            </td>
+        </tr>
+
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center text-muted">
+                No Lab Tests
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+        </div>
+    </div>
+
+</div>
+</div></div></div>
+</div>
+        </div>
+
+
+    </div>
+{% endblock %}

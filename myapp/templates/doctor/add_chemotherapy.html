@@ -1,0 +1,393 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Add Chemotherapy</h1>
+    <p class="lead fs-5">Manage your patient consultations efficiently.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Chemotherapy</title>
+   
+</head>
+<body>
+
+<div class="container mt-5" style="min-height: 400px;">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Add Chemotherapy</h5>
+        </div>
+
+        <div class="card-body">
+  <div class="container mt-4"><div class="row">
+    <div class="col-sm-6">
+      <form method="post" id="chform">
+    {% csrf_token %}
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label">Session Number</label>
+            <input type="number" name="session_no" id="session_no" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Drug Name</label>
+            <input type="text" name="drug_name" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Dosage</label>
+            <input type="text" name="dosage" class="form-control">
+        </div>
+    </div>
+
+    <!-- IMPORTANT: Keep row wrapper -->
+    <div class="row" id="date_fields"></div>
+
+    <button type="submit" class="btn btn-success w-100 mt-3">
+        Save
+    </button>
+
+</form>
+</div>
+</div>
+<div class="col-sm-6">
+  <h4>Chemotherapy Sessions</h4>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Session Date</th>
+            <th>Drug</th>
+            <th>Dosage</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for chemo in chemo_list %}
+        <tr>
+            <td>{{ chemo.chemo_date }}</td>
+            <td>{{ chemo.drug_name }}</td>
+            <td>{{ chemo.dosage }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.getElementById("session_no").addEventListener("input", function() {
+
+        let count = parseInt(this.value) || 0;
+        let container = document.getElementById("date_fields");
+        container.innerHTML = "";
+
+        let today = new Date().toISOString().split("T")[0];
+
+        for (let i = 1; i <= count; i++) {
+
+            let div = document.createElement("div");
+            div.className = "col-md-4 mb-3";
+
+            div.innerHTML = `
+                <label class="form-label">Session ${i} Date</label>
+                <input type="date"
+                       name="chemo_dates"
+                       class="form-control chemo-date"
+                       min="${today}"
+                       required>
+            `;
+
+            container.appendChild(div);
+        }
+
+        setSequentialValidation();
+    });
+
+    function setSequentialValidation() {
+        document.querySelectorAll(".chemo-date").forEach((input, index, allInputs) => {
+
+            input.addEventListener("change", function () {
+
+                if (allInputs[index + 1]) {
+                    allInputs[index + 1].min = this.value;
+                }
+
+            });
+
+        });
+    }
+
+});
+</script>
+
+<script>
+(function ($, W, D) {
+
+$(D).ready(function () {
+
+    // Custom method for sequential date validation
+    $.validator.addMethod("sequentialDates", function (value, element) {
+
+        let dates = $(".chemo-date").map(function () {
+            return this.value;
+        }).get();
+
+        for (let i = 1; i < dates.length; i++) {
+            if (dates[i] < dates[i - 1]) {
+                return false;
+            }
+        }
+
+        return true;
+
+    }, "Dates must be same or after previous session");
+
+
+
+    $("#chform").validate({
+
+        ignore: [],
+
+        rules: {
+
+            session_no: {
+                required: true,
+                digits: true,
+                min: 1,
+                max: 50
+            },
+
+            drug_name: {
+                required: true,
+                minlength: 2
+            },
+
+            dosage: {
+                required: true,
+                minlength: 1
+            },
+
+            "chemo_dates[]": {
+                required: true,
+                date: true,
+                sequentialDates: true
+            }
+
+        },
+
+        messages: {
+
+            session_no: {
+                required: "Enter number of sessions",
+                digits: "Only numbers allowed",
+                min: "Minimum 1 session required",
+                max: "Maximum 50 sessions allowed"
+            },
+
+            drug_name: {
+                required: "Enter drug name",
+                minlength: "Minimum 2 characters required"
+            },
+
+            dosage: {
+                required: "Enter dosage details"
+            },
+
+            "chemo_dates[]": {
+                required: "Select session date"
+            }
+
+        },
+
+        errorElement: "div",
+        errorClass: "invalid-feedback",
+
+        highlight: function (element) {
+            $(element).addClass("is-invalid");
+        },
+
+        unhighlight: function (element) {
+            $(element).removeClass("is-invalid");
+        },
+
+        errorPlacement: function (error, element) {
+            error.insertAfter(element);
+        },
+
+        submitHandler: function (form) {
+            form.submit();
+        }
+
+    });
+
+});
+
+})(jQuery, window, document);
+</script>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+  
+  
+</div>
+
+<script src="{% static 'user/Validation/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'user/Validation/jquery_validate.js' %}"></script>
+<script src="{% static 'user/Validation/additional_validate.js' %}"></script>
+
+<script>
+(function ($, W, D) {
+
+  $(D).ready(function () {
+
+  $("#clinicalForm").validate({
+  ignore: [],
+
+  rules: {
+    symptoms: {
+      required: true,
+      minlength: 5
+    },
+
+  
+
+    pain_intensity: {
+      required: true,
+      digits: true,
+      min: 0,
+      max: 10
+    },
+
+    ulcer_duration: {
+      required: true
+    },
+
+    diagnosis: {
+      required: true,
+      minlength: 3
+    },
+
+    medicine_details: {
+      required: true
+    },
+
+    medicine_usage: {
+      required: true
+    },
+
+    more_details: {
+      required: true
+    },
+
+    next_visit_date: {
+      required: true,
+      date: true
+    }
+  },
+
+  messages: {
+    symptoms: {
+      required: "Please enter symptoms",
+      minlength: "Enter at least 5 characters"
+    },
+
+    oral_lesions: "Please confirm oral lesions status",
+    unexplained_bleeding: "Please confirm bleeding status",
+    difficulty_swallowing: "Please confirm swallowing difficulty",
+    white_red_patches: "Please confirm patches status",
+
+    pain_intensity: {
+      required: "Please select pain intensity",
+      digits: "Only numbers allowed",
+      min: "Minimum value is 0",
+      max: "Maximum value is 10"
+    },
+
+    ulcer_duration: {
+      required: "Please select ulcer duration"
+    },
+
+    diagnosis: {
+      required: "Please enter diagnosis"
+    },
+
+    medicine_details: {
+      required: "Please enter medicine details"
+    },
+
+    medicine_usage: {
+      required: "Please enter medicine usage instructions"
+    },
+
+    more_details: {
+      required: "Please enter additional details"
+    },
+
+    next_visit_date: {
+      required: "Please select next visit date"
+    }
+  },
+
+  errorElement: "div",
+  errorClass: "invalid-feedback",
+
+  highlight: function (element) {
+    $(element).addClass("is-invalid");
+  },
+
+  unhighlight: function (element) {
+    $(element).removeClass("is-invalid");
+  },
+
+  errorPlacement: function (error, element) {
+    if (element.attr("type") === "checkbox") {
+      error.insertAfter(element.closest(".form-check"));
+    } else {
+      error.insertAfter(element);
+    }
+  },
+
+
+      submitHandler: function (form) {
+        form.submit();
+      }
+
+    });
+
+  });
+
+})(jQuery, window, document);
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const dateInput = document.getElementById("date");
+
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+
+    const minDate = `${yyyy}-${mm}-${dd}`;
+
+    // Set minimum selectable date as today
+    dateInput.setAttribute("min", minDate);
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'patient/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-center text-white">
+    <i class="bi bi-chat-square-text display-1 mb-3"></i>
+    <h1 class="display-4 fw-bold mb-2">Your Feedback</h1>
+    <p class="lead fs-5">
+      Share your experience and view responses from the administrator.
+    </p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!-- Page Header End -->
+
+<div class="container" style="max-width: 1050px; min-height: 200px;">
+<div class="row"><div class="col-md-6">
+  <!-- Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm">
+        <i class="bi bi-info-circle me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Feedback Form -->
+  <div class="card shadow rounded-4 mb-5 border-0">
+    <div class="card-body p-4">
+      <h5 class="fw-bold text-primary mb-3">
+        <i class="bi bi-pencil-square me-2"></i>Send Feedback
+      </h5>
+
+      <form method="post" id="feedbackForm" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+          <textarea name="feedback"
+                    id="feedbackInput"
+                    class="form-control form-control-lg shadow-sm"
+                    rows="4"
+                    placeholder="Write your feedback here..."
+                    required></textarea>
+          <div class="invalid-feedback">
+            Please enter your feedback.
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+          <i class="bi bi-send-fill me-2"></i>Submit Feedback
+        </button>
+      </form>
+    </div>
+  </div>
+</div><div class="col-md-6">
+  <!-- Feedback History -->
+  <h5 class="fw-bold text-secondary mb-3">
+    <i class="bi bi-clock-history me-2"></i>My Feedback History
+  </h5>
+
+  {% if data %}
+    <div class="list-group shadow rounded-4">
+      {% for f in data %}
+        <div class="list-group-item py-3 px-4 mb-2 rounded-3 border">
+          <div class="mb-2">
+            <strong>
+              <i class="bi bi-chat-left-text me-1 text-primary"></i>
+              Feedback:
+            </strong>
+            <div class="mt-1">{{ f.feedback }}</div>
+          </div>
+
+          <div class="small text-muted mb-2">
+            <i class="bi bi-calendar-event me-1"></i>
+            {{ f.date|date:"d M Y, h:i A" }}
+          </div>
+
+          {% if f.reply %}
+            <div class="alert alert-success mt-3 mb-0">
+              <i class="bi bi-reply-fill me-2"></i>
+              <strong>Admin Reply:</strong><br>
+              {{ f.reply }}
+            </div>
+          {% else %}
+            <div class="alert alert-warning mt-3 mb-0">
+              <i class="bi bi-hourglass-split me-2"></i>
+              Waiting for admin reply
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info text-center py-5 rounded-4 shadow-sm">
+      <i class="bi bi-chat-dots fs-1 mb-3 text-primary"></i>
+      <p class="mb-0 fs-5">No feedback submitted yet.</p>
+    </div>
+  {% endif %}
+
+</div>
+</div></div>
+<!-- Simple Validation -->
+<script>
+  (function () {
+    const form = document.getElementById('feedbackForm');
+    const input = document.getElementById('feedbackInput');
+
+    form.addEventListener('submit', function (e) {
+      if (!input.value.trim()) {
+        e.preventDefault();
+        input.classList.add('is-invalid');
+      } else {
+        input.classList.remove('is-invalid');
+      }
+    });
+  })();
+</script>
+
+{% endblock %}

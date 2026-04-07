@@ -1,0 +1,73 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Patient -  Messages</h1>
+    <p class="lead fs-5">Messages from Patient</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+
+
+<div class="container py-5">
+    <h2>Messages From Patients</h2>
+
+    <table class="table table-bordered table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Patient</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Reply</th>
+                <th colspan="2">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for msg in messages_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ msg.patient.name }}</td>
+                <td>{{ msg.message }}</td>
+                <td>{{ msg.date|date:"d M Y H:i" }}</td>
+                <td>
+                   {% if not msg.reply %}
+                        <span class="badge bg-warning">Pending</span>
+                    {% else %}
+                       {{ msg.reply }}
+                    {% endif %}
+                </td>
+                <td>
+                 {% if not msg.reply %}
+                        <a href="{% url 'reply_patient' msg.message_id %}" 
+                           class="btn btn-sm btn-primary">
+                           Reply
+                        </a>
+                    {% else %}
+                        <span class="text-success">Replied</span>
+                    {% endif %}
+                </td>
+                  <td>
+                            <a href="{% url 'treatment_details' msg.patient.patient_id %}"
+                               class="btn btn-sm btn-primary">
+                               View
+                            </a>
+                        </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted">
+                    No messages from patients.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

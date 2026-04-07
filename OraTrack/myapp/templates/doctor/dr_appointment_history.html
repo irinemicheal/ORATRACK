@@ -1,0 +1,184 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Doctor Appointments History</h1>
+    <p class="lead fs-5">View  Appointments History.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Appointments History</title>
+  
+</head>
+<body>
+
+<div class="container mt-5" style="min-height: 400px;">
+
+<div class="mb-5">
+
+  <!-- Label -->
+  <label for="searchInput" class="form-label fw-bold text-primary fs-5">
+    <i class="bi bi-search me-2"></i>
+    Search Appointment
+  </label>
+
+  <!-- Search Box with Icon -->
+  <div class="input-group shadow-sm rounded-4 overflow-hidden">
+    <span class="input-group-text bg-white border-0">
+      <i class="bi bi-search text-muted"></i>
+    </span>
+
+    <input type="text"
+           id="searchInput"
+           class="form-control border-0 py-3"
+           placeholder="Enter Patient ID or Appointment Number"
+           style="font-size: 15px;">
+
+  </div>
+
+</div>
+
+
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h4>My Appointments</h4>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Patient</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Clinical</th>
+                        <th>Prescription</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="appointmentContainer">
+                    {% for appointment in appointments %}
+                    <tr>
+
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ appointment.appointment_date }}</td>
+                        <td>{{ appointment.appointment_time }}</td>
+
+                        <td>
+                            {{ appointment.patient.name }} <br>
+                            <small>{{ appointment.patient.phone }}</small>
+                        </td>
+
+                        <td>{{ appointment.department.name }}</td>
+
+                        <td>
+                            <span class="badge bg-info">
+                                {{ appointment.status }}
+                            </span>
+                        </td>
+
+                        <!-- Clinical Status -->
+                        <td>
+                            {% if appointment.clinical %}
+                                <span class="badge bg-success">Done</span>
+                            {% else %}
+                                <span class="badge bg-danger">Pending</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Prescription Status -->
+                        <td>
+                            {% if appointment.prescription %}
+                                <span class="badge bg-success">Given</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Not Given</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'treatment_details' appointment.patient.patient_id %}"
+                               class="btn btn-sm btn-primary">
+                               View
+                            </a>
+                        </td>
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">
+                            No Appointments Found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+</div>
+</div>
+
+        </div>
+    </div>
+    </div>
+    </div>  
+
+
+<script src="{% static 'user/Validation/jquery-1.11.1.min.js' %}"></script>
+<script>
+$(document).ready(function() {
+    $("#searchInput").on("keyup", function () {
+        let value = $(this).val();
+
+        $.ajax({
+            url: "{% url 'search_appointments_history' %}",  // Make sure you create this view
+            data: { search: value },
+            success: function (response) {
+                let html = "";
+
+                if (response.appointments.length === 0) {
+                    html = `<tr>
+                              <td colspan="9" class="text-center text-muted">No results found</td>
+                            </tr>`;
+                } else {
+                    response.appointments.forEach(function(appt, index) {
+                        html += `
+<tr>
+  <td>${index + 1}</td>
+  <td>${appt.appointment_date}</td>
+  <td>${appt.appointment_time}</td>
+  <td>${appt.patient_name}<br><small>${appt.patient_phone}</small></td>
+  <td>${appt.department}</td>
+  <td><span class="badge bg-info">${appt.status}</span></td>
+  <td>${appt.clinical ? '<span class="badge bg-success">Done</span>' : '<span class="badge bg-danger">Pending</span>'}</td>
+  <td>${appt.prescription ? '<span class="badge bg-success">Given</span>' : '<span class="badge bg-warning text-dark">Not Given</span>'}</td>
+  <td>
+    <a href="/treatment_details/${appt.patient_id}/" class="btn btn-sm btn-primary">View</a>
+  </td>
+</tr>
+                        `;
+                    });
+                }
+
+                $("#appointmentContainer").html(html);
+            }
+        });
+    });
+});
+
+
+    </script>
+{% endblock %}

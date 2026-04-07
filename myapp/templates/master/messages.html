@@ -1,0 +1,108 @@
+{% extends 'master/header.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pagetitle">
+
+</div>
+
+<section class="section dashboard">
+
+
+
+<div class="container mt-4">
+    <h3 class="mb-4">
+        <i class="bi bi-chat-dots-fill text-primary"></i> Patient - Doctor Messages
+    </h3>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th>#</th>
+                            <th>Patient Details</th>
+                            <th>Doctor Details</th>
+                            <th>Message</th>
+                            <th>Reply</th>
+                            <th>Status</th>
+                          
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for msg in messages %}
+                        <tr>
+                            <td class="text-center">{{ forloop.counter }}</td>
+
+                            <!-- Patient Details -->
+                            <td>
+                                <strong>{{ msg.patient.name }}</strong><br>
+                                <small class="text-muted">
+                                    📧 {{ msg.patient.email }} <br>
+                                    📞 {{ msg.patient.phone }}
+                                </small>
+                            </td>
+
+                            <!-- Doctor Details -->
+                            <td>
+                                <strong>Dr. {{ msg.doctor.name }}</strong><br>
+                                <small class="text-muted">
+                                    🏥 {{ msg.doctor.department.name }} <br>
+                                    📧 {{ msg.doctor.email }}
+                                </small>
+                            </td>
+
+                            <!-- Message -->
+                            <td style="max-width:250px;">
+                                {{ msg.message }}
+                            </td>
+
+                            <!-- Reply -->
+                            <td style="max-width:250px;">
+                                {% if msg.reply %}
+                                    {{ msg.reply }}
+                                {% else %}
+                                    <span class="text-muted">No Reply Yet</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Status -->
+                            <td class="text-center">
+                                {% if msg.reply %}
+                                    <span class="badge bg-success text-dark px-3 py-2">
+                                        Replied
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning px-3 py-2">
+                                       Pending
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Action -->
+                          
+                        </tr>
+
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                No Messages Found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+</section>
+{% endblock %}

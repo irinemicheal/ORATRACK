@@ -1,0 +1,99 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Add Chemotherapy</h1>
+    <p class="lead fs-5">Manage your patient consultations efficiently.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Chemotherapy</title>
+  
+</head>
+<body>
+
+<div class="container mt-5" style="min-height: 400px;">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">View Chemotherapy</h5>
+        </div>
+
+        <div class="card-body">
+  <div class="container mt-4"><div class="row">
+   
+<div class="col-sm-12">
+  <h4>Chemotherapy Sessions</h4>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} shadow-sm rounded">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+
+<h4 class="mb-3">Patient Details</h4>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <strong>Name:</strong> {{ appointment.patient.name }}
+            </div>
+            <div class="col-md-4">
+                <strong>Age:</strong> {{ appointment.patient.age }}
+            </div>
+            <div class="col-md-4">
+                <strong>Gender:</strong> {{ appointment.patient.gender }}
+            </div>
+            <div class="col-md-4 mt-2">
+                <strong>Phone:</strong> {{ appointment.patient.phone }}
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Session Date</th>
+            <th>Drug</th>
+            <th>Dosage</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for chemo in chemo_list %}
+        <tr>
+            <td>{{ chemo.chemo_date }}</td>
+            <td>{{ chemo.drug_name }}</td>
+            <td>{{ chemo.dosage }}</td>
+               <td>
+                            {% if radio.radio_date < today %}
+                                <span class="badge bg-success">Completed</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Upcoming</span>
+                            {% endif %}
+                        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</div>
+</div></div></div>
+
+
+        </div>
+
+
+    </div>
+{% endblock %}

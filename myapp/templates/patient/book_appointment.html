@@ -1,0 +1,263 @@
+{% extends 'patient/header.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5 mb-5" style="background: linear-gradient(135deg, #0d6efd, #6f42c1);">
+    <div class="container text-center py-5">
+        <h1 class="display-2 text-white fw-bold mb-3 animated slideInDown">Book Appointment</h1>
+        <p class="lead text-white-50 mb-0 animated slideInDown">
+            Choose your doctor and schedule your visit easily
+        </p>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<div class="container my-5" >
+
+  <!-- Messages -->
+  {% if messages %}
+    <div class="mb-4">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+          <i class="fas 
+            {% if message.tags == 'success' %}fa-check-circle text-success
+            {% elif message.tags == 'warning' %}fa-exclamation-triangle text-warning
+            {% elif message.tags == 'error' or message.tags == 'danger' %}fa-times-circle text-danger
+            {% else %}fa-info-circle text-info
+            {% endif %} me-2"></i>
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+    <div class="row">
+ <div class="col-md-6">
+  <!-- Health Details Preview -->
+ <div class="card shadow border-0 rounded-4 mb-5">
+  <div class="card-body p-4">
+ 
+    <h5 class="fw-bold text-primary mb-4">
+      <i class="fas fa-notes-medical me-2"></i>Your Health Snapshot
+    </h5>
+
+    <div class="row g-3">
+
+    
+      <!-- Tobacco -->
+      <div class="col-md-6">
+        <div class="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+          <i class="fas fa-smoking text-danger fs-4"></i>
+          <div><strong>Tobacco Use:</strong> {{ health_details.tobacco_use }}</div>
+        </div>
+      </div>
+
+      <!-- Alcohol -->
+      <div class="col-md-6">
+        <div class="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+          <i class="fas fa-wine-glass text-warning fs-4"></i>
+          <div><strong>Alcohol Consumption:</strong> {{ health_details.alcohol_consumption }}</div>
+        </div>
+      </div>
+
+      <!-- Betel Quid -->
+      <div class="col-md-6">
+        <div class="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+          <i class="fas fa-leaf text-success fs-4"></i>
+          <div><strong>Betel Quid Use:</strong> {{ health_details.betel_quid_use }}</div>
+        </div>
+      </div>
+
+      <!-- Sun Exposure -->
+      <div class="col-md-6">
+        <div class="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+          <i class="fas fa-sun text-warning fs-4"></i>
+          <div><strong>Chronic Sun Exposure:</strong> {{ health_details.sun_exposure }}</div>
+        </div>
+      </div>
+      <!-- Family History -->
+      <div class="col-md-6">
+        <div class="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+          <i class="fas fa-users text-primary fs-4"></i>
+          <div><strong>Family History of Cancer:</strong> {{ health_details.family_history }}</div>
+        </div>
+      </div>
+
+      <!-- Immune System -->
+      <div class="col-md-6">
+        <div class="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+          <i class="fas fa-shield-virus text-danger fs-4"></i>
+          <div><strong>Immune Compromised:</strong> {{ health_details.immune_compromised }}</div>
+        </div>
+      </div>
+
+      <!-- HPV -->
+      <div class="col-md-6">
+        <div class="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+          <i class="fas fa-virus text-secondary fs-4"></i>
+          <div><strong>HPV Infection:</strong> {{ health_details.hpv_infection }}</div>
+        </div>
+      </div>
+
+      <!-- Lifestyle -->
+      <div class="col-md-6">
+        <div class="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+          <i class="fas fa-heartbeat text-primary fs-4"></i>
+          <div><strong>Lifestyle:</strong> {{ health_details.lifestyle_habits }}</div>
+        </div>
+      </div>
+
+      <!-- Symptoms -->
+      <div class="col-md-6">
+        <div class="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+          <i class="fas fa-stethoscope text-primary fs-4"></i>
+          <div><strong>Symptoms:</strong> {{ health_details.symptoms }}</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+ <div class="col-md-6">
+  <!-- Appointment Form -->
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-body p-5">
+
+      <form id="appointmentForm" method="post" novalidate>
+        {% csrf_token %}
+
+        <!-- Department -->
+     <div class="mb-4">
+    <label class="form-label fw-semibold fs-5">
+        <i class="fas fa-building text-primary me-2"></i>Department
+    </label>
+    <select id="department" name="department" class="form-select form-select-lg shadow-sm" required>
+        <option value="" disabled selected>-- Choose Department --</option>
+        {% for d in departments %}
+            <option value="{{ d.department_id }}">{{ d.name }}</option>
+        {% endfor %}
+    </select>
+    <div class="invalid-feedback">Please select a department.</div>
+</div>
+
+<div class="mb-4">
+    <label class="form-label fw-semibold fs-5">
+        <i class="fas fa-user-md text-primary me-2"></i>Doctor
+    </label>
+    <select id="doctor" name="doctor" class="form-select form-select-lg shadow-sm" required>
+        <option value="" disabled selected>-- Choose Doctor --</option>
+    </select>
+    <div class="invalid-feedback">Please select a doctor.</div>
+</div>
+        <!-- Date & Time -->
+        <div class="row g-4">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold fs-5">
+              <i class="fas fa-calendar-day text-primary me-2"></i>Date
+            </label>
+            <input type="date" id="date" name="date" class="form-control form-control-lg shadow-sm" required>
+            <div class="invalid-feedback">Please select a date.</div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold fs-5">
+              <i class="fas fa-clock text-primary me-2"></i>Time
+            </label>
+            <input type="time" id="time" name="time" class="form-control form-control-lg shadow-sm" required>
+            <div class="invalid-feedback">Please select a time.</div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-grid gap-3 mt-5">
+          <button class="btn btn-primary btn-lg shadow" type="submit" style="transition: background-color 0.3s ease;">
+            <i class="fas fa-check-circle me-2"></i> Confirm Appointment
+          </button>
+
+          <a href="{% url 'view_appointments' %}"
+             class="btn btn-outline-secondary btn-lg shadow-sm">
+            <i class="fas fa-eye me-2"></i> View Appointment Status
+          </a>
+        </div>
+
+      </form>
+    </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- Font Awesome -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous">
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const dateInput = document.getElementById("date");
+
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+
+    const minDate = `${yyyy}-${mm}-${dd}`;
+
+    // Set minimum selectable date as today
+    dateInput.setAttribute("min", minDate);
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const timeInput = document.getElementById("time");
+
+    // Set allowed daytime range
+    timeInput.setAttribute("min", "09:00");
+    timeInput.setAttribute("max", "17:00");
+  });
+</script>
+
+<script>
+  // Example starter JavaScript for disabling form submissions if there are invalid fields
+  (function () {
+    'use strict'
+
+    var form = document.getElementById('appointmentForm')
+
+    form.addEventListener('submit', function (event) {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      form.classList.add('was-validated')
+    }, false)
+  })()
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+    $('#department').change(function(){
+        let deptId = $(this).val();
+        if(deptId){
+            $.ajax({
+                url: '/get-doctors/' + deptId + '/',
+                type: 'GET',
+                success: function(response){
+                    let doctorSelect = $('#doctor');
+                    doctorSelect.empty();
+                    doctorSelect.append('<option value="" disabled selected>-- Choose Doctor --</option>');
+                    response.doctors.forEach(function(doc){
+                        doctorSelect.append('<option value="'+doc.doctor_id+'">'+doc.name+'</option>');
+                    });
+                }
+            });
+        } else {
+            $('#doctor').empty();
+            $('#doctor').append('<option value="" disabled selected>-- Choose Doctor --</option>');
+        }
+    });
+});
+</script>
+{% endblock %}

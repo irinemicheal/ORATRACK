@@ -1,0 +1,84 @@
+{% extends 'master/header.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pagetitle">
+
+</div>
+
+<section class="section dashboard">
+
+
+<div class="container mt-4">
+    <h3 class="mb-4">
+        <i class="bi bi-capsule text-primary"></i> Chemotherapy Treatments
+    </h3>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark text-center">
+        <tr>
+            <th>#</th>
+            <th>Patient Details</th>
+            <th>Doctor Details</th>
+            <th>Session</th>
+            <th>Drug</th>
+            <th>Dosage</th>
+            <th>Chemo Date</th>
+            <th>Created</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for chemo in chemos %}
+        <tr>
+            <td class="text-center">{{ forloop.counter }}</td>
+
+            <!-- Patient Full Details -->
+            <td>
+                <strong>{{ chemo.appointment.patient.name }}</strong><br>
+                <small class="text-muted">
+                    ID: {{ chemo.appointment.patient.patient_id }} <br>
+                    📧 {{ chemo.appointment.patient.email }} <br>
+                    📞 {{ chemo.appointment.patient.phone }}
+                </small>
+            </td>
+
+            <!-- Doctor Full Details -->
+            <td>
+                <strong>Dr. {{ chemo.appointment.doctor.name }}</strong><br>
+                <small class="text-muted">
+                    🏥 {{ chemo.appointment.doctor.department.name }} <br>
+                    📧 {{ chemo.appointment.doctor.email }} <br>
+                    📞 {{ chemo.appointment.doctor.phone }}
+                </small>
+            </td>
+
+            <td class="text-center">{{ chemo.session_no }}</td>
+            <td>{{ chemo.drug_name }}</td>
+            <td>{{ chemo.dosage }}</td>
+            <td class="text-center">{{ chemo.chemo_date }}</td>
+            <td class="text-center">
+                {{ chemo.created_at|date:"d M Y" }}
+            </td>
+        </tr>
+
+        {% empty %}
+        <tr>
+            <td colspan="8" class="text-center text-muted py-4">
+                No Chemotherapy Records Found
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'master/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="pagetitle mb-4">
+    <h2>Complaint Management</h2>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'admin_home' %}">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">Complaints</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container-fluid">
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm">
+                <i class="bi bi-info-circle me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if data %}
+        <div class="card shadow border-0">
+            <div class="card-body p-0">
+
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-uppercase small">
+                        <tr>
+                            <th>#</th>
+                            <th>Patient</th>
+                            <th>Complaint</th>
+                            <th>Date</th>
+                            <th style="width: 30%;">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for c in data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>
+                                <i class="bi bi-person-fill text-danger me-1"></i>
+                                {{ c.patient.name }}
+                            </td>
+
+                            <td>
+                                <div class="p-2 bg-light border-start border-3 border-danger rounded">
+                                    {{ c.complaint }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ c.date|date:"d M Y" }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="complaint_id" value="{{ c.complaint_id }}">
+
+                                    <textarea name="reply"
+                                              class="form-control mb-2"
+                                              rows="2"
+                                              placeholder="Enter admin response..."
+                                              required>{{ c.reply }}</textarea>
+
+                                    {% if c.reply %}
+                                        <span class="badge bg-success mb-2">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Resolved
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark mb-2">
+                                            <i class="bi bi-hourglass-split me-1"></i>
+                                            Pending
+                                        </span>
+                                    {% endif %}
+
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-send-exclamation me-1"></i>
+                                            Send Reply
+                                        </button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-secondary shadow-sm">
+            <i class="bi bi-inbox me-2"></i>
+            No complaints available.
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

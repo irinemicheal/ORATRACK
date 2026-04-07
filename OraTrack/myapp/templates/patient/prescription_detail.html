@@ -1,0 +1,145 @@
+{% extends 'patient/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-center text-white">
+    <i class="bi bi-file-medical-fill display-1 mb-3"></i>
+    <h1 class="display-4 fw-bold mb-2">Prescription Details</h1>
+    <p class="lead fs-5">
+      Detailed view of your prescription and appointment information
+    </p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!-- Page Header End -->
+
+<div class="container" style="max-width: 720px;">
+  <div class="card shadow-sm p-4 mb-4 rounded-4">
+    <div class="mb-4">
+      <h5 class="fw-semibold">
+        <i class="bi bi-person-circle me-2 text-primary"></i>Doctor
+      </h5>
+      <p class="fs-5 mb-0">{{ appointment.doctor.name }}</p>
+    </div>
+
+    <div class="mb-4">
+      <h5 class="fw-semibold">
+        <i class="bi bi-calendar-event me-2 text-primary"></i>Appointment Date
+      </h5>
+      <p class="fs-5 mb-0">{{ appointment.appointment_date|date:"d M Y" }}</p>
+    </div>
+
+    {% if prescription %}
+      <hr>
+
+      <div class="mb-4">
+        <h5 class="fw-semibold">
+          <i class="bi bi-journal-medical me-2 text-primary"></i>Diagnosis
+        </h5>
+        <p class="fs-6">{{ prescription.diagnosis|default:"N/A" }}</p>
+      </div>
+
+      <div class="mb-4">
+        <h5 class="fw-semibold">
+          <i class="bi bi-capsule me-2 text-primary"></i>Medicine Details
+        </h5>
+        <p class="fs-6">{{ prescription.medicine_details|default:"N/A" }}</p>
+      </div>
+
+      <div class="mb-4">
+        <h5 class="fw-semibold">
+          <i class="bi bi-clock-history me-2 text-primary"></i>Medicine Usage
+        </h5>
+        <p class="fs-6">{{ prescription.medicine_usage|default:"N/A" }}</p>
+      </div>
+
+      <div class="mb-4">
+        <h5 class="fw-semibold">
+          <i class="bi bi-exclamation-triangle me-2 text-primary"></i>Additional Details / Precautions
+        </h5>
+        <p class="fs-6">{{ prescription.more_details|default:"N/A" }}</p>
+      </div>
+
+      <div>
+        <h5 class="fw-semibold">
+          <i class="bi bi-arrow-repeat me-2 text-primary"></i>Next Visit Date
+        </h5>
+        <p class="fs-6">{{ prescription.next_visit_date|date:"d M Y"|default:"Not specified" }}</p>
+      </div>
+
+    {% else %}
+      <div class="alert alert-info text-center py-4 rounded-3 mt-4">
+        <i class="bi bi-info-circle me-2"></i>No prescription details available for this appointment.
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="text-center mb-5">
+    <a href="{% url 'patient_prescriptions' %}" class="btn btn-outline-primary btn-lg shadow-sm">
+      <i class="bi bi-arrow-left-circle me-2"></i>Back to Prescriptions
+    </a>
+  </div>
+
+ <table class="table table-bordered table-striped table-hover shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Test Name</th>
+            <th>Lab</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Report</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for test in lab_tests %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ test.lab_test.test_name }}</td>
+            <td>{{ test.lab_test.lab.lab_name }}</td>
+
+            <td>
+                <span class="badge
+                    {% if test.status == 'Pending' %}
+                        bg-warning text-dark
+                    {% elif test.status == 'Processing' %}
+                        bg-info
+                    {% elif test.status == 'Completed' %}
+                        bg-success
+                    {% else %}
+                        bg-secondary
+                    {% endif %}">
+                    {{ test.status }}
+                </span>
+            </td>
+
+            <td>
+                {{ test.created_at|date:"d-m-Y h:i A" }}
+            </td>
+
+            <td>
+                {% if test.report_file %}
+                    <a href="{{ test.report_file.url }}"
+                       target="_blank"
+                       class="btn btn-sm btn-outline-primary">
+                        View Report
+                    </a>
+                {% else %}
+                    <span class="text-muted">No Report</span>
+                {% endif %}
+            </td>
+        </tr>
+
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center text-muted">
+                No Lab Tests
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

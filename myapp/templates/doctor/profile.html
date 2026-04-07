@@ -1,0 +1,120 @@
+{% extends "doctor/header.html" %}
+{% block content %}
+{% load static %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-center text-white">
+    <i class="bi bi-person-badge-fill display-1 mb-3"></i>
+    <h1 class="fw-bold mb-2">Doctor Profile</h1>
+    <p class="lead fs-5">Keep your information up to date</p>
+    <hr class="mx-auto" style="width: 90px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+
+<div class="container">
+  <div class="row justify-content-center">
+
+    <div class="col-lg-9">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+        <!-- Profile Header -->
+        <div class="bg-light text-center py-4">
+          {% if doctor.image %}
+            <img src="{{ doctor.image.url }}" class="rounded-circle shadow mb-3" width="140" height="140" alt="Profile Image">
+          {% else %}
+            <img src="{% static 'img/doctor-avatar.png' %}" class="rounded-circle shadow mb-3" width="140" alt="Default Profile Image">
+          {% endif %}
+
+          <h3 class="fw-bold">{{ doctor.name }}</h3>
+
+          <span class="badge fs-6 px-4 py-2 rounded-pill 
+            {% if doctor.status == 'Available' %}bg-success{% else %}bg-danger{% endif %}">
+            {{ doctor.status }}
+          </span>
+        </div>
+
+        <div class="card-body p-5">
+
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-success text-center rounded-pill mb-4 shadow-sm">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <form method="post" action="{% url 'update_doctor_profile' %}" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="doctor_id" value="{{ doctor.doctor_id }}">
+
+            <div class="row g-4">
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Doctor Name</label>
+                <input type="text" class="form-control form-control-lg rounded-pill" name="name" value="{{ doctor.name }}" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Qualification</label>
+                <input type="text" class="form-control form-control-lg rounded-pill" name="qualification" value="{{ doctor.qualification }}" required>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Experience (Years)</label>
+                <input type="number" class="form-control form-control-lg rounded-pill" name="experience" value="{{ doctor.experience }}" required>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Email</label>
+                <input type="email" class="form-control form-control-lg rounded-pill" name="email" value="{{ doctor.email }}" required>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Phone</label>
+                <input type="text" class="form-control form-control-lg rounded-pill" name="phone" value="{{ doctor.phone }}" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Update Profile Image</label>
+                <input type="file" class="form-control form-control-lg rounded-pill" name="image" accept="image/*">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Availability Status</label>
+                <div class="border rounded-4 p-3 d-flex justify-content-center gap-4">
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="status" id="statusAvailable" value="Available"
+                      {% if doctor.status == 'Available' %}checked{% endif %}>
+                    <label class="form-check-label fw-semibold text-success" for="statusAvailable">Available</label>
+                  </div>
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="status" id="statusUnavailable" value="Unavailable"
+                      {% if doctor.status == 'Unavailable' %}checked{% endif %}>
+                    <label class="form-check-label fw-semibold text-danger" for="statusUnavailable">Unavailable</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="text-center mt-5">
+              <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill shadow-lg">
+                <i class="bi bi-pencil-square me-2"></i> Update Profile
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Bootstrap Icons CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+{% endblock %}

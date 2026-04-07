@@ -1,0 +1,87 @@
+{% extends 'master/header.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pagetitle">
+
+</div>
+
+<section class="section dashboard">
+
+
+
+<div class="container mt-4">
+    <h3 class="mb-4">
+        <i class="bi bi-broadcast text-danger"></i> Radiotherapy Treatments
+    </h3>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark text-center">
+        <tr>
+            <th>#</th>
+            <th>Patient Details</th>
+            <th>Doctor Details</th>
+            <th>Session</th>
+            <th>Radiation Type</th>
+            <th>Dose</th>
+            <th>Radiotherapy Date</th>
+            <th>Created</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for radio in radios %}
+        <tr>
+            <td class="text-center">{{ forloop.counter }}</td>
+
+            <!-- Patient Full Details -->
+            <td>
+                <strong>{{ radio.appointment.patient.name }}</strong><br>
+                <small class="text-muted">
+                    ID: {{ radio.appointment.patient.patient_id }} <br>
+                    📧 {{ radio.appointment.patient.email }} <br>
+                    📞 {{ radio.appointment.patient.phone }}
+                </small>
+            </td>
+
+            <!-- Doctor Full Details -->
+            <td>
+                <strong>Dr. {{ radio.appointment.doctor.name }}</strong><br>
+                <small class="text-muted">
+                    🏥 {{ radio.appointment.doctor.department.name }} <br>
+                    📧 {{ radio.appointment.doctor.email }} <br>
+                    📞 {{ radio.appointment.doctor.phone }}
+                </small>
+            </td>
+
+            <td class="text-center">{{ radio.session_no }}</td>
+            <td>{{ radio.radiation_type }}</td>
+            <td>{{ radio.dose }}</td>
+            <td class="text-center">{{ radio.radio_date }}</td>
+            <td class="text-center">
+                {{ radio.created_at|date:"d M Y" }}
+            </td>
+        </tr>
+
+        {% empty %}
+        <tr>
+            <td colspan="8" class="text-center text-muted py-4">
+                No Radiotherapy Records Found
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+</section>
+{% endblock %}

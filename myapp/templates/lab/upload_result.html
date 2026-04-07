@@ -1,0 +1,99 @@
+{% extends 'lab/header.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pagetitle mb-4">
+    <h2 class="fw-bold">Upload Result Test</h2>
+    <p class="text-muted fs-5">Upload laboratory tests </p>
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm">
+        {{ message }}
+        <button class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div class="row g-4">
+<div class="col-sm-6">
+
+<form method="POST" enctype="multipart/form-data" id="Upload">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label class="form-label">Upload Report</label>
+        <input type="file" name="report_file" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Upload Report
+    </button>
+</form>
+<script src="{% static 'user/Validation/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'user/Validation/jquery_validate.js' %}"></script>
+<script src="{% static 'user/Validation/additional_validate.js' %}"></script>
+
+<script>
+(function ($, W, D) {
+
+  $(D).ready(function () {
+
+  $("#Upload").validate({
+  ignore: [],
+
+  rules: {
+    report_file: {
+      required: true,
+     extension:'pdf'
+    },
+
+    },
+
+  messages: {
+    report_file: {
+      required: "Please Upload PDF Report",
+      extension: "Please Upload PDF Report"
+    },
+
+  },
+
+  errorElement: "div",
+  errorClass: "invalid-feedback",
+
+  highlight: function (element) {
+    $(element).addClass("is-invalid");
+  },
+
+  unhighlight: function (element) {
+    $(element).removeClass("is-invalid");
+  },
+
+  errorPlacement: function (error, element) {
+    if (element.attr("type") === "checkbox") {
+      error.insertAfter(element.closest(".form-check"));
+    } else {
+      error.insertAfter(element);
+    }
+  },
+
+
+      submitHandler: function (form) {
+        form.submit();
+      }
+
+    });
+
+  });
+
+})(jQuery, window, document);
+</script>
+</div>
+          </div>
+      </div>
+  </div>
+
+
+
+{% endblock %}

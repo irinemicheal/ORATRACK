@@ -1,0 +1,135 @@
+
+{% extends 'patient/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-center text-white">
+    <i class="bi bi-chat-square-text display-1 mb-3"></i>
+    <h1 class="display-4 fw-bold mb-2">Your Message</h1>
+    <p class="lead fs-5">
+    Send Emergency Message to Doctor
+    </p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!-- Page Header End -->
+
+<div class="container" style="max-width: 80%; min-height: 200px;">
+
+  <!-- Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm">
+        <i class="bi bi-info-circle me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Feedback Form -->
+  <div class="card shadow rounded-4 mb-5 border-0">
+    <div class="card-body p-4">
+      <h5 class="fw-bold text-primary mb-3">
+        <i class="bi bi-pencil-square me-2"></i>Send Message
+      </h5><div class="row">
+<div class="col-sm-6">
+ <form method="post" id="messageForm">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="doctor_id" class="form-label">Select Doctor</label>
+            <select name="doctor_id" id="doctor_id" class="form-select" required>
+                <option value="" selected disabled>-- Choose Doctor --</option>
+                {% for doctor in consulted_doctors %}
+                    <option value="{{ doctor.doctor_id }}">
+                        {{ doctor.name }} ({{ doctor.qualification }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="message" class="form-label">Emergency Message</label>
+            <textarea name="message" id="message" rows="4" class="form-control" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Send Message</button>
+    </form>
+</div><div class="col-sm-6">
+    {% if messages_list %}
+        <div class="">
+            <h4>Past Messages & Replies</h4>
+            <ul class="list-group">
+                {% for msg in messages_list %}
+                    <li class="list-group-item">
+                        <div>
+                            <strong>To {{ msg.doctor.name }}:</strong>
+                            <p class="text-justify">{{ msg.message }}</p>
+                        </div>
+                        <div class="ms-4">
+                            <strong>Doctor Reply:</strong>
+                            {% if msg.reply %}
+                                <p>{{ msg.reply }}</p>
+                            {% else %}
+                                <p class="text-muted">Not replied yet</p>
+                            {% endif %}
+                        </div>
+                        <span class="text-muted float-end">{{ msg.date|date:"d M Y H:i" }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">No messages yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div></div>
+<script src="{% static 'user/Validation/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'user/Validation/jquery_validate.js' %}"></script>
+<script src="{% static 'user/Validation/additional_validate.js' %}"></script>
+
+<script>
+$(document).ready(function() {
+    $("#messageForm").validate({
+        rules: {
+            doctor_id: {
+                required: true
+            },
+            message: {
+                required: true,
+                minlength: 10
+            }
+        },
+        messages: {
+            doctor_id: {
+                required: "Please select a doctor"
+            },
+            message: {
+                required: "Please enter your health condition",
+                minlength: "Message should be at least 10 characters"
+            }
+        },
+        errorElement: "div",
+        errorClass: "invalid-feedback",
+        highlight: function(element) {
+            $(element).addClass("is-invalid");
+        },
+        unhighlight: function(element) {
+            $(element).removeClass("is-invalid");
+        },
+        errorPlacement: function(error, element) {
+            error.insertAfter(element);
+        },
+        submitHandler: function(form) {
+            form.submit();
+        }
+    });
+});
+</script>
+
+</div>
+</div></div>
+
+</div></div>
+{% endblock %}

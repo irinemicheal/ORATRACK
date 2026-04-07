@@ -1,0 +1,50 @@
+{% extends 'patient/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-center text-white">
+    <i class="bi bi-journal-medical display-1 mb-3"></i>
+    <h1 class="display-4 fw-bold mb-2">All Radiotherapy Sessions</h1>
+    <p class="lead fs-5">
+      Complete list of all radiotherapy sessions for the patient.
+    </p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+<!-- Page Header End -->
+
+<div class="container" style="max-width: 1020px; min-height: 200px;">
+    <h4>All Radiotherapy Sessions</h4>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Session Number</th>
+                <th>Radiation Type</th>
+                <th>Dose</th>
+                <th>Date</th>
+                <th>Doctor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for radio in radio_sessions %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ radio.session_no }}</td>
+                <td>{{ radio.radiation_type }}</td>
+                <td>{{ radio.dose }}</td>
+                <td>{{ radio.radio_date }}</td>
+                <td>{{ radio.appointment.doctor.name }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted">No Radiotherapy Sessions Found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Prediction</h1>
+    <p class="lead fs-5">Prediction Result.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+
+<div class="container" style="max-width: 900px;">
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} shadow-sm rounded">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+ 
+
+      <div class="card-body">
+
+    <h2>Oral Cancer Prediction Report</h2>
+
+    {% if error %}
+        <div class="alert alert-warning">{{ error }}</div>
+    {% else %}
+        <!-- Patient & Appointment Info -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4>Patient & Appointment Details</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Patient Name:</strong> {{ appointment.patient.name }}</p>
+                <p><strong>Age:</strong> {{ appointment.patient.age }}</p>
+                <p><strong>Gender:</strong> {{ appointment.patient.gender }}</p>
+                <p><strong>Doctor:</strong> {{ appointment.doctor.name }}</p>
+                <p><strong>Appointment Date:</strong> {{ appointment.date }}</p>
+            </div>
+        </div>
+
+        <!-- Prediction Values -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h4>Prediction Input Values</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        {% for key, value in patient_values.items %}
+                        <tr>
+                            <th>{{ key }}</th>
+                            <td>{{ value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Prediction Result -->
+        <div class="card mb-4">
+            <div class="card-header bg-danger text-white">
+                <h4>Prediction Result</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Result:</strong> {{ result_text }}</p>
+                <p><strong>Probability:</strong> {{ prob_text }}</p>
+
+                {% if result_text == "High Risk of Oral Cancer" %}
+                    <a href="{% url 'forward_to_lab_test' appointment.appointment_id %}" class="btn btn-warning mt-3">
+                        Forward to Lab Test
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+
+  
+
+      </div>
+    </div>
+  
+  
+</div>
+
+
+{% endblock %}

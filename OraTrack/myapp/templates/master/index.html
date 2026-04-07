@@ -1,0 +1,285 @@
+{% extends 'master/header.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pagetitle">
+  <h1>OraTrack Dashboard</h1>
+  <p class="text-muted">
+    ML Powered Oral Cancer Detection & Oncology Management
+  </p>
+</div>
+
+<section class="section dashboard">
+
+  <div class="row">
+
+    <!-- Patients -->
+    <div class="col-xl-3 col-md-6 mt-2">
+      <div class="card info-card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Patients</h5>
+          <div class="d-flex align-items-center">
+            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary text-white">
+              <i class="bi bi-people"></i>
+            </div>
+            <div class="ps-3">
+              <h6>{{ patient_count|default:"0" }}</h6>
+              <span class="text-muted small">Registered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Doctors -->
+    <div class="col-xl-3 col-md-6 mt-2">
+      <div class="card info-card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Doctors</h5>
+          <div class="d-flex align-items-center">
+            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white">
+              <i class="bi bi-person-badge"></i>
+            </div>
+            <div class="ps-3">
+              <h6>{{ doctor_count|default:"0" }}</h6>
+              <span class="text-muted small">Registered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Departments -->
+    <div class="col-xl-3 col-md-6 mt-2">
+      <div class="card info-card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Departments</h5>
+          <div class="d-flex align-items-center">
+            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info text-white">
+              <i class="bi bi-building"></i>
+            </div>
+            <div class="ps-3">
+              <h6>{{ department_count|default:"0" }}</h6>
+              <span class="text-muted small">Available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appointments -->
+    <div class="col-xl-3 col-md-6 mt-2">
+      <div class="card info-card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Appointments</h5>
+          <div class="d-flex align-items-center">
+            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning text-white">
+              <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="ps-3">
+              <h6>{{ appointment_count|default:"0" }}</h6>
+              <span class="text-muted small">Total</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- Pending Appointments -->
+<div class="col-xl-3 col-md-6 mt-2">
+  <div class="card info-card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Pending Appointments</h5>
+      <div class="d-flex align-items-center">
+        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-danger text-white">
+          <i class="bi bi-hourglass-split"></i>
+        </div>
+        <div class="ps-3">
+          <h6>{{ pending_appointment_count|default:"0" }}</h6>
+          <span class="text-muted small">Waiting Approval</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Approved Appointments -->
+<div class="col-xl-3 col-md-6 mt-2">
+  <div class="card info-card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Approved Appointments</h5>
+      <div class="d-flex align-items-center">
+        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white">
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <div class="ps-3">
+          <h6>{{ approved_appointment_count|default:"0" }}</h6>
+          <span class="text-muted small">Confirmed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Confirmed Oncology Cases -->
+    <div class="col-xl-3 col-md-6 mt-2">
+      <div class="card info-card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Confirmed Cases</h5>
+          <div class="d-flex align-items-center">
+            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-danger text-white">
+              <i class="bi bi-heart-pulse"></i>
+            </div>
+            <div class="ps-3">
+              <h6>{{ confirmed_case_count|default:"0" }}</h6>
+              <span class="text-muted small">Oncology</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Labs -->
+    <div class="col-xl-3 col-md-6 mt-2">
+      <div class="card info-card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Labs</h5>
+          <div class="d-flex align-items-center">
+            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-secondary text-white">
+              <i class="bi bi-hospital"></i>
+            </div>
+            <div class="ps-3">
+              <h6>{{ lab_count|default:"0" }}</h6>
+              <span class="text-muted small">Registered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lab Tests -->
+    <div class="col-xl-3 col-md-6 mt-2">
+      <div class="card info-card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Lab Tests</h5>
+          <div class="d-flex align-items-center">
+            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-dark text-white">
+              <i class="bi bi-clipboard-data"></i>
+            </div>
+            <div class="ps-3">
+              <h6>{{ lab_test_count|default:"0" }}</h6>
+              <span class="text-muted small">Available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Messages -->
+    <div class="col-xl-3 col-md-6 mt-2">
+      <div class="card info-card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Pending Messages</h5>
+          <div class="d-flex align-items-center">
+            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning text-white">
+              <i class="bi bi-chat-dots"></i>
+            </div>
+            <div class="ps-3">
+              <h6>{{ pending_message_count|default:"0" }}</h6>
+              <span class="text-muted small">Awaiting Reply</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- Chemotherapy -->
+<div class="col-xl-3 col-md-6 mt-2">
+  <div class="card info-card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Chemotherapy</h5>
+      <div class="d-flex align-items-center">
+        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary text-white">
+          <i class="bi bi-capsule"></i>
+        </div>
+        <div class="ps-3">
+          <h6>{{ chemo_count|default:"0" }}</h6>
+          <span class="text-muted small">Sessions</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Radiotherapy -->
+<div class="col-xl-3 col-md-6 mt-2">
+  <div class="card info-card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Radiotherapy</h5>
+      <div class="d-flex align-items-center">
+        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-dark text-white">
+          <i class="bi bi-broadcast"></i>
+        </div>
+        <div class="ps-3">
+          <h6>{{ radio_count|default:"0" }}</h6>
+          <span class="text-muted small">Sessions</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Feedback -->
+<div class="col-xl-3 col-md-6 mt-2">
+  <div class="card info-card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Feedback</h5>
+      <div class="d-flex align-items-center">
+        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning text-white">
+          <i class="bi bi-star"></i>
+        </div>
+        <div class="ps-3">
+          <h6>{{ feedback_count|default:"0" }}</h6>
+          <span class="text-muted small">Reviews</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Complaints -->
+<div class="col-xl-3 col-md-6 mt-2">
+  <div class="card info-card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Complaints</h5>
+      <div class="d-flex align-items-center">
+        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-danger text-white">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <div class="ps-3">
+          <h6>{{ complaint_count|default:"0" }}</h6>
+          <span class="text-muted small">Issues Reported</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Total Messages -->
+<div class="col-xl-3 col-md-6 mt-2">
+  <div class="card info-card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Total Messages</h5>
+      <div class="d-flex align-items-center">
+        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-secondary text-white">
+          <i class="bi bi-envelope"></i>
+        </div>
+        <div class="ps-3">
+          <h6>{{ message_count|default:"0" }}</h6>
+          <span class="text-muted small">All Messages</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
+</section>
+
+
+
+
+{% endblock %}

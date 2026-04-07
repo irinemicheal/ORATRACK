@@ -1,0 +1,198 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Lab</h1>
+    <p class="lead fs-5">Lab Test.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+
+<div class="container" style="max-width: 900px;">
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} shadow-sm rounded">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+ 
+
+      <div class="card-body">
+
+    <h2>Lab Test</h2>
+
+    <h2>Forward Patient to Lab Tests</h2>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container my-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Forward Patient to Lab</h4>
+    </div>
+    <div class="card-body">
+      <form method="post" id="forward-lab-form">
+        {% csrf_token %}
+
+        <!-- Lab Selection -->
+        <div class="mb-3">
+          <label for="lab-select" class="form-label fw-bold">Select Lab</label>
+          <select class="form-select" id="lab-select" name="lab" required>
+            <option value="">-- Select Lab --</option>
+            {% for lab in labs %}
+              <option value="{{ lab.lab_id }}">{{ lab.lab_name }} ({{ lab.lab_type }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Tests Multi-Select -->
+        <div class="mb-3">
+          <label for="tests-container" class="form-label fw-bold">Select Test(s)</label>
+          <select class="form-select" id="tests-container" name="tests" multiple required style="height:150px;">
+            <option value="">Select a lab first</option>
+          </select>
+          <div class="form-text">Hold Ctrl (Windows) or Cmd (Mac) to select multiple tests</div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+          <label for="test-description" class="form-label fw-bold">Test Description</label>
+          <textarea id="test-description" class="form-control" rows="3"  placeholder="Select a test to see description"></textarea>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn btn-success">
+          <i class="bi bi-forward-fill"></i> Forward to Lab
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<!-- jQuery for simplicity -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'user/Validation/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'user/Validation/jquery_validate.js' %}"></script>
+<script src="{% static 'user/Validation/additional_validate.js' %}"></script>
+
+<script>
+(function ($, W, D) {
+  $(D).ready(function () {
+
+    // =======================
+    // Load lab tests via AJAX
+    // =======================
+ 
+
+    // =======================
+    // Form validation
+    // =======================
+    $("#forward-lab-form").validate({
+        ignore: [],
+        rules: {
+            lab: {
+                required: true
+            },
+            'lab_test_ids': {
+                required: true
+            }
+        },
+        messages: {
+            lab: {
+                required: "Please select a lab"
+            },
+            'lab_test_ids': {
+                required: "Please select at least one test"
+            }
+        },
+        errorElement: "div",
+        errorClass: "invalid-feedback",
+        highlight: function(element) {
+            $(element).addClass("is-invalid");
+        },
+        unhighlight: function(element) {
+            $(element).removeClass("is-invalid");
+        },
+        errorPlacement: function(error, element) {
+            if (element.attr("type") === "checkbox") {
+                error.insertAfter(element.closest(".form-check"));
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        submitHandler: function(form) {
+            form.submit();
+        }
+    });
+
+  });
+})(jQuery, window, document);
+</script>
+
+<script>
+$(document).ready(function(){
+
+    // When Lab is selected, fetch tests via AJAX
+    $('#lab-select').change(function(){
+        var labId = $(this).val();
+        if(labId){
+            $.ajax({
+                url: "{% url 'ajax_load_lab_tests' %}",  // Django view to return tests JSON
+                data: {'lab_id': labId},
+                dataType: 'json',
+                success: function(data){
+                    var $tests = $('#tests-container');
+                    $tests.empty();  // Clear previous options
+                    if(data.tests.length > 0){
+                        $.each(data.tests, function(i, test){
+                            $tests.append(
+                                $('<option>', {
+                                    value: test.test_id,
+                                    text: test.test_name,
+                                    'data-desc': test.description
+                                })
+                            );
+                        });
+                        $('#test-description').val(''); // Clear description
+                    } else {
+                        $tests.append('<option value="">No tests available</option>');
+                    }
+                }
+            });
+        } else {
+            $('#tests-container').html('<option value="">Select a lab first</option>');
+            $('#test-description').val('');
+        }
+    });
+
+    // When test is selected, show its description
+    $('#tests-container').change(function(){
+        var selectedOption = $(this).find('option:selected').first();
+        $('#test-description').val(selectedOption.data('desc') || '');
+    });
+
+});
+</script>
+
+
+
+  
+
+      </div>
+    </div>
+  
+  
+</div>
+
+
+{% endblock %}

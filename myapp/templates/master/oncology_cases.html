@@ -1,0 +1,100 @@
+{% extends 'master/header.html' %}
+{% load static %}
+
+{% block content %}
+<h2 class="mb-4 text-center text-primary">Oncology Cases List</h2>
+
+
+
+<div class="container mt-4">
+    <h3 class="mb-4">
+        <i class="bi bi-heart-pulse-fill text-danger"></i> Oncology Cases
+    </h3>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Appointment Date</th>
+                            <th>Detection Status</th>
+                            <th>Created On</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for case in cases %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                         <td>
+    <strong>{{ case.patient.name }}</strong><br>
+    <small class="text-muted">
+        ID: {{ case.patient.patient_id }} <br>
+        Email: {{ case.patient.email }} <br>
+        Phone: {{ case.patient.phone }}
+    </small>
+</td>
+
+<td>
+    <strong>Dr. {{ case.doctor.name }}</strong><br>
+    <small class="text-muted">
+        Department: {{ case.doctor.department.name }} <br>
+        Email: {{ case.doctor.email }} <br>
+        Phone: {{ case.doctor.phone }}
+    </small>
+</td>
+
+                            <td>{{ case.appointment.appointment_date }}</td>
+
+                            <td>
+                                {% if case.detection_status == "Suspected" %}
+                                    <span class="badge bg-warning text-dark px-3 py-2">
+                                        Suspected
+                                    </span>
+                                {% elif case.detection_status == "Confirmed" %}
+                                    <span class="badge bg-danger px-3 py-2">
+                                        Confirmed
+                                    </span>
+                                {% elif case.detection_status == "Negative" %}
+                                    <span class="badge bg-success px-3 py-2">
+                                        Negative
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ case.created_at|date:"d M Y H:i" }}
+                            </td>
+                             <td>
+                              <a href="{% url 'adm_patient_details' case.appointment.patient.patient_id %}" class="btn btn-info">Patient Analytics</a>
+                            </td>
+                        </tr>
+
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-muted py-4">
+                                No Oncology Cases Found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+

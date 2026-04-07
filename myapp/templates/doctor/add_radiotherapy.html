@@ -1,0 +1,225 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Add Radio therapy</h1>
+    <p class="lead fs-5">Add Radio Therapy details </p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+
+<div class="container" style="max-width: 900px;">
+
+
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">Add Radiotherapy</h5>
+        </div>
+
+        <div class="card-body">
+       <form method="post" id="radioForm">
+    {% csrf_token %}
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Session Number</label>
+            <input type="number"
+                   id="radio_session_no"
+                   name="session_no"
+                   class="form-control"
+                   required>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Radiation Type</label>
+            <input type="text"
+                   name="radiation_type"
+                   class="form-control"
+                   required>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Dose</label>
+            <input type="text"
+                   name="dose"
+                   class="form-control"
+                   required>
+        </div>
+
+    </div>
+
+    <!-- Dynamic Date Fields -->
+    <div class="row" id="radio_date_fields"></div>
+
+    <button type="submit" class="btn btn-warning w-100 mt-3">
+        Save Radiotherapy
+    </button>
+
+</form>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.getElementById("radio_session_no").addEventListener("input", function() {
+
+        let count = parseInt(this.value) || 0;
+        let container = document.getElementById("radio_date_fields");
+        container.innerHTML = "";
+
+        let today = new Date().toISOString().split("T")[0];
+
+        for (let i = 1; i <= count; i++) {
+
+            let div = document.createElement("div");
+            div.className = "col-md-4 mb-3";
+
+            div.innerHTML = `
+                <label class="form-label">Session ${i} Date</label>
+                <input type="date"
+                       name="radio_dates[]"
+                       class="form-control radio-date"
+                       min="${today}"
+                       required>
+            `;
+
+            container.appendChild(div);
+        }
+
+        setSequentialValidation();
+    });
+
+    function setSequentialValidation() {
+        document.querySelectorAll(".radio-date").forEach((input, index, allInputs) => {
+
+            input.addEventListener("change", function () {
+
+                if (allInputs[index + 1]) {
+                    allInputs[index + 1].min = this.value;
+                }
+
+            });
+
+        });
+    }
+
+});
+</script>
+
+  <script>
+(function ($, W, D) {
+
+$(D).ready(function () {
+
+    $.validator.addMethod("sequentialRadioDates", function () {
+
+        let dates = $(".radio-date").map(function () {
+            return this.value;
+        }).get();
+
+        for (let i = 1; i < dates.length; i++) {
+            if (dates[i] < dates[i - 1]) {
+                return false;
+            }
+        }
+
+        return true;
+
+    }, "Dates must be same or after previous session");
+
+
+
+    $("#radioForm").validate({
+
+        ignore: [],
+
+        rules: {
+
+            session_no: {
+                required: true,
+                digits: true,
+                min: 1,
+                max: 50
+            },
+
+            radiation_type: {
+                required: true,
+                minlength: 2
+            },
+
+            dose: {
+                required: true
+            },
+
+            "radio_dates[]": {
+                required: true,
+                date: true,
+                sequentialRadioDates: true
+            }
+
+        },
+
+        messages: {
+
+            session_no: {
+                required: "Enter number of sessions",
+                digits: "Only numbers allowed",
+                min: "Minimum 1 session required",
+                max: "Maximum 50 sessions allowed"
+            },
+
+            radiation_type: {
+                required: "Enter radiation type"
+            },
+
+            dose: {
+                required: "Enter dose details"
+            },
+
+            "radio_dates[]": {
+                required: "Select session date"
+            }
+
+        },
+
+        errorElement: "div",
+        errorClass: "invalid-feedback",
+
+        highlight: function (element) {
+            $(element).addClass("is-invalid");
+        },
+
+        unhighlight: function (element) {
+            $(element).removeClass("is-invalid");
+        },
+
+        errorPlacement: function (error, element) {
+            error.insertAfter(element);
+        },
+
+        submitHandler: function (form) {
+            form.submit();
+        }
+
+    });
+
+});
+
+})(jQuery, window, document);
+</script>
+      </div>
+    </div>
+</div>
+
+
+</div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+
+{% endblock %}

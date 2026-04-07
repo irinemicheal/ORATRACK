@@ -1,0 +1,75 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Forward to Oncology Department</h1>
+    <p class="lead fs-5">Forward to Oncology Department.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+
+<div class="container" style="max-width: 1200px;">
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} shadow-sm rounded">
+        {{ message }} 
+      </div>
+    {% endfor %}
+  {% endif %}
+
+ 
+
+      <div class="card-body">
+
+    <h2>Lab Test Result</h2>
+
+
+<div class="container mt-5" style="min-height: 300px;">
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label>Select Oncology Doctor</label>
+        <select name="doctor" class="form-control" required>
+            <option value="">-- Select Doctor --</option>
+            {% for doctor in oncology_doctors %}
+                <option value="{{ doctor.doctor_id }}">
+                    Dr. {{ doctor.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>New Appointment Date</label>
+        <input type="date" name="appointment_date" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label>New Appointment Time</label>
+        <input type="time" name="appointment_time" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Confirm Oncology Case
+    </button>
+</form>
+
+
+
+  
+
+      </div>
+    </div>
+  
+  
+</div>
+
+
+{% endblock %}

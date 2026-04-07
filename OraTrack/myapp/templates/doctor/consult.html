@@ -1,0 +1,285 @@
+{% extends 'doctor/header.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="container-fluid bg-primary py-5 mb-5">
+  <div class="container text-white text-center">
+    <i class="bi bi-calendar-check-fill display-2 mb-3"></i>
+    <h1 class="fw-bold mb-2">Consult Information</h1>
+    <p class="lead fs-5">Manage your patient consultations efficiently.</p>
+    <hr class="mx-auto" style="width: 80px; border-width: 3px; border-color: rgba(255,255,255,0.7);">
+  </div>
+</div>
+
+<div class="container" style="max-width: 900px;">
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} shadow-sm rounded">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+ 
+
+      <div class="card-body">
+
+       
+        <!-- Clinical Examination + Prescription Form (only if Approved) -->
+        {% if appt.status == 'Approved' %}
+       
+<form method="post" action="{% url 'save_clinical' %}" id="clinicalForm">
+    {% csrf_token %}
+    <input type="hidden" name="appointment_id" value="{{ appt.appointment_id }}">
+
+    <!-- ================= CLINICAL EXAMINATION ================= -->
+    <h5 class="text-primary mb-3">Clinical Examination</h5>
+
+    <!-- Symptoms -->
+    <textarea name="symptoms" class="form-control mb-3"
+        placeholder="Symptoms (Self Observed)">{{ appt.clinical.symptoms|default_if_none:"" }}</textarea>
+
+    <!-- Checkboxes -->
+    <div class="row mb-3">
+        <div class="col-md-6 form-check">
+            <input type="checkbox" class="form-check-input" name="oral_lesions"
+                   {% if appt.clinical and appt.clinical.oral_lesions %}checked{% endif %}>
+            <label class="form-check-label">Oral Lesions</label>
+        </div>
+
+        <div class="col-md-6 form-check">
+            <input type="checkbox" class="form-check-input" name="unexplained_bleeding"
+                   {% if appt.clinical and appt.clinical.unexplained_bleeding %}checked{% endif %}>
+            <label class="form-check-label">Unexplained Bleeding</label>
+        </div>
+
+        <div class="col-md-6 form-check mt-2">
+            <input type="checkbox" class="form-check-input" name="difficulty_swallowing"
+                   {% if appt.clinical and appt.clinical.difficulty_swallowing %}checked{% endif %}>
+            <label class="form-check-label">Difficulty Swallowing</label>
+        </div>
+
+        <div class="col-md-6 form-check mt-2">
+            <input type="checkbox" class="form-check-input" name="white_red_patches"
+                   {% if appt.clinical and appt.clinical.white_red_patches %}checked{% endif %}>
+            <label class="form-check-label">White / Red Patches</label>
+        </div>
+    </div>
+
+    <!-- Pain Intensity -->
+    <select name="pain_intensity" class="form-select mb-3">
+        <option value="">Pain Intensity (0–10)</option>
+        {% for i in "0123456789" %}
+            <option value="{{ forloop.counter0 }}"
+            {% if appt.clinical and appt.clinical.pain_intensity == forloop.counter0 %}selected{% endif %}>
+                {{ forloop.counter0 }}
+            </option>
+        {% endfor %}
+        <option value="10"
+            {% if appt.clinical and appt.clinical.pain_intensity == 10 %}selected{% endif %}>
+            10
+        </option>
+    </select>
+
+    <!-- Ulcer Duration -->
+    <select name="ulcer_duration" class="form-select mb-4">
+        <option value="">Ulcer Duration</option>
+        {% for val in "3 Days,5 Days,1 Week,2 Weeks,1 Month,More than 1 Month"|cut:" " %}
+        {% endfor %}
+        <option value="3 Days" {% if appt.clinical.ulcer_duration == "3 Days" %}selected{% endif %}>3 Days</option>
+        <option value="5 Days" {% if appt.clinical.ulcer_duration == "5 Days" %}selected{% endif %}>5 Days</option>
+        <option value="1 Week" {% if appt.clinical.ulcer_duration == "1 Week" %}selected{% endif %}>1 Week</option>
+        <option value="2 Weeks" {% if appt.clinical.ulcer_duration == "2 Weeks" %}selected{% endif %}>2 Weeks</option>
+        <option value="1 Month" {% if appt.clinical.ulcer_duration == "1 Month" %}selected{% endif %}>1 Month</option>
+        <option value="More than 1 Month"
+            {% if appt.clinical.ulcer_duration == "More than 1 Month" %}selected{% endif %}>
+            More than 1 Month
+        </option>
+    </select>
+
+    <!-- ================= PRESCRIPTION ================= -->
+    <h5 class="text-primary mb-3">Prescription</h5>
+
+    <textarea name="diagnosis" class="form-control mb-3"
+        placeholder="Diagnosis">{{ appt.prescription.diagnosis|default_if_none:"" }}</textarea>
+
+    <textarea name="medicine_details" class="form-control mb-3"
+        placeholder="Medicine Details">{{ appt.prescription.medicine_details|default_if_none:"" }}</textarea>
+
+    <textarea name="medicine_usage" class="form-control mb-3"
+        placeholder="Medicine Usage Instructions">{{ appt.prescription.medicine_usage|default_if_none:"" }}</textarea>
+
+    <textarea name="more_details" class="form-control mb-3"
+        placeholder="More Details / Precautions / Treatment Plan">{{ appt.prescription.more_details|default_if_none:"" }}</textarea>
+
+    <input type="date" name="next_visit_date" class="form-control mb-4"
+        value="{{ appt.prescription.next_visit_date|date:'Y-m-d' }}"     min="{{ today }}">
+
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-save me-1"></i> Save Clinical & Prescription
+    </button>
+</form>
+
+        {% endif %}
+
+        <div class="mt-3 text-end">
+          <a href="{% url 'doctor_appointment_detail' appt.appointment_id %}" class="btn btn-info btn-sm">
+            <i class="bi bi-eye-fill me-1"></i> View Details
+          </a>
+        
+        </div>
+
+      </div>
+    </div>
+  
+  
+</div>
+
+<script src="{% static 'user/Validation/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'user/Validation/jquery_validate.js' %}"></script>
+<script src="{% static 'user/Validation/additional_validate.js' %}"></script>
+
+<script>
+(function ($, W, D) {
+
+  $(D).ready(function () {
+
+  $("#clinicalForm").validate({
+  ignore: [],
+
+  rules: {
+    symptoms: {
+      required: true,
+      minlength: 5
+    },
+
+  
+
+    pain_intensity: {
+      required: true,
+      digits: true,
+      min: 0,
+      max: 10
+    },
+
+    ulcer_duration: {
+      required: true
+    },
+
+    diagnosis: {
+      required: true,
+      minlength: 3
+    },
+
+    medicine_details: {
+      required: true
+    },
+
+    medicine_usage: {
+      required: true
+    },
+
+    more_details: {
+      required: true
+    },
+
+    next_visit_date: {
+      required: true,
+      date: true
+    }
+  },
+
+  messages: {
+    symptoms: {
+      required: "Please enter symptoms",
+      minlength: "Enter at least 5 characters"
+    },
+
+    oral_lesions: "Please confirm oral lesions status",
+    unexplained_bleeding: "Please confirm bleeding status",
+    difficulty_swallowing: "Please confirm swallowing difficulty",
+    white_red_patches: "Please confirm patches status",
+
+    pain_intensity: {
+      required: "Please select pain intensity",
+      digits: "Only numbers allowed",
+      min: "Minimum value is 0",
+      max: "Maximum value is 10"
+    },
+
+    ulcer_duration: {
+      required: "Please select ulcer duration"
+    },
+
+    diagnosis: {
+      required: "Please enter diagnosis"
+    },
+
+    medicine_details: {
+      required: "Please enter medicine details"
+    },
+
+    medicine_usage: {
+      required: "Please enter medicine usage instructions"
+    },
+
+    more_details: {
+      required: "Please enter additional details"
+    },
+
+    next_visit_date: {
+      required: "Please select next visit date"
+    }
+  },
+
+  errorElement: "div",
+  errorClass: "invalid-feedback",
+
+  highlight: function (element) {
+    $(element).addClass("is-invalid");
+  },
+
+  unhighlight: function (element) {
+    $(element).removeClass("is-invalid");
+  },
+
+  errorPlacement: function (error, element) {
+    if (element.attr("type") === "checkbox") {
+      error.insertAfter(element.closest(".form-check"));
+    } else {
+      error.insertAfter(element);
+    }
+  },
+
+
+      submitHandler: function (form) {
+        form.submit();
+      }
+
+    });
+
+  });
+
+})(jQuery, window, document);
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const dateInput = document.getElementById("date");
+
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+
+    const minDate = `${yyyy}-${mm}-${dd}`;
+
+    // Set minimum selectable date as today
+    dateInput.setAttribute("min", minDate);
+  });
+</script>
+
+{% endblock %}

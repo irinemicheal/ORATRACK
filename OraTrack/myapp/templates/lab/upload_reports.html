@@ -1,0 +1,158 @@
+{% extends 'lab/header.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pagetitle mb-4">
+    <h2 class="fw-bold">Processing Test</h2>
+    <p class="text-muted fs-5">Processing laboratory tests </p>
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm">
+        {{ message }}
+        <button class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div class="row g-4">
+
+  <!-- ADD TEST FORM -->
+  <div class="col-md-12">
+      <div class="card shadow border-0 rounded-4">
+          <div class="card-body p-4">
+              
+<div class="mb-5">
+
+  <!-- Label -->
+  <label for="searchInput" class="form-label fw-bold text-primary fs-5">
+    <i class="bi bi-search me-2"></i>
+    Search Patient
+  </label>
+
+  <!-- Search Box with Icon -->
+  <div class="input-group shadow-sm rounded-4 overflow-hidden">
+    <span class="input-group-text bg-white border-0">
+      <i class="bi bi-search text-muted"></i>
+    </span>
+
+    <input type="text"
+           id="searchInput"
+           class="form-control border-0 py-3"
+           placeholder="Enter Patient ID or Appointment Number"
+           style="font-size: 15px;">
+
+  </div>
+ 
+<div class="container mt-4">
+    <h3 class="mb-4 text-primary">Processing Lab Reports</h3>
+
+    <table class="table table-bordered table-hover shadow">
+        <thead class="table-dark">
+            <tr>
+                <th>Patient</th>
+                <th>Test</th>
+                <th>Appointment Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+      <tbody id="ajax_result">
+            {% for test in tests %}
+            <tr><td>
+               <div class="small text-muted">
+                  <strong>OP Number</strong> {{ test.patient.patient_id }} <br>
+                      <strong>Name</strong> {{ test.patient.name }} <br>
+        <strong>Age:</strong> {{ test.patient.age }} <br>
+        <strong>Gender:</strong> {{ test.patient.gender }} <br>
+        <strong>Phone:</strong> {{ test.patient.phone }} <br>
+        <strong>Email:</strong> {{ test.patient.email }}
+    </div></td>
+                <td>{{ test.lab_test.test_name }}</td>
+                <td>{{ test.appointment.appointment_date }}</td>
+                <td>
+                    <span class="badge bg-warning">
+                        {{ test.status }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'upload_test_result' test.id %}"
+                       class="btn btn-sm btn-success">
+                        Upload Report
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">
+                    No Pending Reports
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+
+          </div>
+      </div>
+  </div>
+
+<script src="{% static 'user/Validation/jquery-1.11.1.min.js' %}"></script>
+<script>
+$(document).ready(function() {
+    $("#searchInput").on("keyup", function() {
+        let value = $(this).val();
+
+        $.ajax({
+            url: "{% url 'search_lab_tests_processing' %}",
+            data: { search: value },
+            dataType: "json",
+            success: function(response) {
+                let html = "";
+
+                if (response.tests.length === 0) {
+                    html = `<tr>
+                                <td colspan="5" class="text-center text-muted">
+                                    No Pending Reports
+                                </td>
+                            </tr>`;
+                } else {
+                    response.tests.forEach(function(test) {
+                        html += `
+<tr>
+    <td>
+        <div class="small text-muted">
+            <strong>OP Number:</strong> ${test.patient_id} <br>
+            <strong>Name:</strong> ${test.name} <br>
+            <strong>Age:</strong> ${test.age} <br>
+            <strong>Gender:</strong> ${test.gender} <br>
+            <strong>Phone:</strong> ${test.phone} <br>
+            <strong>Email:</strong> ${test.email}
+        </div>
+    </td>
+    <td>${test.test_name}</td>
+    <td>${test.appointment_date}</td>
+    <td>
+        <span class="badge bg-warning">${test.status}</span>
+    </td>
+    <td>
+        <a href="/upload_test_result/${test.id}/" class="btn btn-sm btn-success">
+            Upload Report
+        </a>
+    </td>
+</tr>`;
+                    });
+                }
+
+                $("#ajax_result").html(html);
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}
