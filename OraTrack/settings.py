@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'railway',
         'USER': 'root',
-        'PASSWORD': os.environ.get('MYSQLPASSWORD'),
+        'PASSWORD': os.environ.get('wkOmLoEycQDUbiUWgWejswweVdfMqcRi'),
         'HOST': 'trolley.proxy.rlwy.net',
         'PORT': '22180',
     }
