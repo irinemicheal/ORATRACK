@@ -76,6 +76,8 @@ ORATRACK is an intelligent, full-stack healthcare application designed to improv
 6. Confirmed cases are assigned to oncologist  
 7. Treatment planning and monitoring begins  
 
+##  Demo Link
+https://oratrack.onrender.com
 ## 📸 Screenshots
 
 ### 🔐 Login Page
